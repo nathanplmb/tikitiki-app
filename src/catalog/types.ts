@@ -58,7 +58,8 @@ export type Family =
   | 'punch'
   | 'hot'
   | 'shot'
-  | 'champagne';
+  | 'champagne'
+  | 'neat'; // served as bought, no mixing
 
 export type BaseSpirit =
   | 'gin'
@@ -93,7 +94,11 @@ export type Glass =
   | 'julep'
   | 'irish'
   | 'pint'
-  | 'solo'; // red plastic party cup
+  | 'solo' // red plastic party cup
+  | 'bottle' // small 50 cl clear plastic water bottle
+  | 'can' // 50 cl can
+  | 'slimcan' // 25–33 cl slim can
+  | 'ball'; // 20 cl spherical plastic bottle
 
 export type Method =
   | 'shake'
@@ -155,4 +160,13 @@ export interface CatalogRecipe {
   strength: 0 | 1 | 2 | 3;
   substitutions?: { from: string; to: string; note: string }[];
   provenance: Provenance;
+  /** Packaging colours for ready-to-drink products (shape + colour code only, never a brand logo). */
+  pack?: Pack;
+}
+
+export interface Pack {
+  bg: string;
+  band: string;
+  text: string;
+  ink?: string;
 }

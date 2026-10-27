@@ -18,6 +18,7 @@ interface Props {
   favoriteIds: string[];
   preferredTastes: Taste[];
   initialTastes?: Taste[];
+  initialCollection?: string;
   mode: 'swipe' | 'catalog';
   onModeChange: (m: 'swipe' | 'catalog') => void;
   onSelectCocktail: (c: CocktailRecipe) => void;

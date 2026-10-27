@@ -358,72 +358,76 @@ body { background: var(--tk-bg); -webkit-tap-highlight-color: transparent; overs
 }
 
 /* =========================================================================
-   CRACKHEAD MODE — néon de boîte, gobelets rouges, stickers, lasers
+   CRACKHEAD MODE — heavy metal × glassmorphism
+   Noir profond, logo rouge incandescent, lettrage métal, verre fumé,
+   reflets chromés, braises et halos rouges.
    ========================================================================= */
 html[data-mode='crackhead'] {
-  --tk-bg: #07000c;
-  --tk-accent: #ff1fae;
-  --tk-accent-2: #c6ff00;
-  --tk-accent-3: #00e5ff;
-  --tk-line: rgba(255, 31, 174, 0.35);
+  --tk-bg: #050505;
+  --tk-accent: #ff2a1a;
+  --tk-accent-2: #ff7a1a;
+  --tk-accent-3: #ffffff;
+  --tk-line: rgba(255, 42, 26, 0.28);
+  --drink: #ff2a1a;
 }
-html[data-mode='crackhead'] body { background: #07000c; }
+html[data-mode='crackhead'] body { background: #050505; }
 html[data-mode='crackhead'] .tk-display {
-  font-family: 'Bungee', 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.01em; line-height: 0.95; font-style: normal;
+  font-family: 'Metal Mania', 'Bungee', serif; font-style: normal; letter-spacing: 0.01em; line-height: 0.92;
 }
 html[data-mode='crackhead'] .tk-display.italic, html[data-mode='crackhead'] .tk-display .italic { font-style: normal; }
+/* molten red lettering with a chrome edge and glow */
 html[data-mode='crackhead'] .tk-gradient-text {
-  background: linear-gradient(90deg, #c6ff00, #ff1fae 50%, #00e5ff);
+  background: linear-gradient(180deg, #fff3d6 0%, #ffb08a 18%, #ff2a1a 46%, #9a0800 74%, #ff4a2a 100%);
   -webkit-background-clip: text; background-clip: text; color: transparent;
-  filter: drop-shadow(2px 0 0 rgba(0,229,255,.7)) drop-shadow(-2px 0 0 rgba(255,31,174,.7));
+  filter: drop-shadow(0 0 1px rgba(255,255,255,.6)) drop-shadow(0 0 14px rgba(255,42,26,.75)) drop-shadow(0 2px 0 #2a0000);
 }
+/* smoked glass panels with a red rim light */
 html[data-mode='crackhead'] .tk-glass {
-  background: linear-gradient(160deg, rgba(255,31,174,0.12), rgba(0,229,255,0.05) 60%, rgba(198,255,0,0.06));
-  border: 1px solid rgba(255,31,174,0.45);
-  box-shadow: 0 0 0 1px rgba(0,229,255,0.15), 0 0 26px -6px rgba(255,31,174,0.6), inset 0 1px 0 rgba(255,255,255,0.25);
+  background: linear-gradient(160deg, rgba(255,255,255,0.07), rgba(255,255,255,0.015) 45%, rgba(255,42,26,0.06));
+  backdrop-filter: blur(22px) saturate(140%);
+  -webkit-backdrop-filter: blur(22px) saturate(140%);
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.14), inset 0 -1px 0 rgba(255,42,26,0.35), 0 18px 50px -20px rgba(0,0,0,.9), 0 0 32px -14px rgba(255,42,26,.55);
+}
+html[data-mode='crackhead'] .tk-glass::before {
+  background: linear-gradient(135deg, rgba(255,255,255,0.35), transparent 30%, transparent 65%, rgba(255,42,26,0.85));
 }
 html[data-mode='crackhead'] .tk-liquid {
-  border-color: rgba(198,255,0,0.55);
-  box-shadow: inset 0 1px 1px rgba(255,255,255,.8), 0 0 30px -6px rgba(255,31,174,.8), 0 0 0 1px rgba(0,229,255,.25);
+  background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(20,4,4,0.35) 50%, rgba(255,42,26,0.10));
+  border-color: rgba(255,255,255,0.18);
+  box-shadow: inset 0 1px 0.5px rgba(255,255,255,.65), inset 0 -10px 22px -10px rgba(255,42,26,.45), 0 0 34px -10px rgba(255,42,26,.7), 0 20px 40px -16px #000;
 }
-html[data-mode='crackhead'] .tk-lens { background: linear-gradient(135deg, #c6ff00, #ff1fae); border-color: #fff; }
+html[data-mode='crackhead'] .tk-lens {
+  background: radial-gradient(100% 100% at 50% 0%, rgba(255,140,110,.55), rgba(255,42,26,.35) 45%, rgba(80,0,0,.55));
+  border-color: rgba(255,200,180,.6);
+  box-shadow: inset 0 1px 1px rgba(255,255,255,.85), 0 0 22px -2px rgba(255,42,26,.9);
+}
 html[data-mode='crackhead'] .tk-cta {
-  background: linear-gradient(100deg, #c6ff00, #ff1fae 50%, #00e5ff);
-  background-size: 200% 100%; color: #0a000f !important;
-  box-shadow: 0 0 0 2px #0a000f, 0 0 0 4px #c6ff00, 0 10px 40px -6px #ff1fae;
-  animation: tk-flow 2.4s linear infinite;
+  background: linear-gradient(180deg, #ff5a3a 0%, #e01a0c 45%, #8e0600 100%);
+  color: #fff !important; animation: none;
+  box-shadow: inset 0 1px 0 rgba(255,220,200,.7), inset 0 -3px 8px rgba(0,0,0,.45), 0 0 0 1px rgba(255,90,60,.6), 0 10px 40px -6px rgba(255,42,26,.9);
+  text-shadow: 0 1px 0 rgba(0,0,0,.5);
 }
-html[data-mode='crackhead'] .tk-chip[data-on='true'] { background: #c6ff00; border-color: #c6ff00; color: #0a000f; }
-html[data-mode='crackhead'] .tk-aurora { opacity: 1; filter: blur(60px) saturate(220%); animation: tk-hue 9s linear infinite; }
-@keyframes tk-hue { to { filter: blur(60px) saturate(220%) hue-rotate(360deg); } }
+html[data-mode='crackhead'] .tk-chip { border-color: rgba(255,255,255,.12); }
+html[data-mode='crackhead'] .tk-chip[data-on='true'] { background: #ff2a1a; border-color: #ff2a1a; color: #fff; box-shadow: 0 0 22px -4px #ff2a1a; }
+html[data-mode='crackhead'] .tk-aurora { opacity: .55; filter: blur(80px) saturate(120%); }
+html[data-mode='crackhead'] .tk-aurora span { background: #8e0600 !important; }
+html[data-mode='crackhead'] .tk-mono { color: rgba(255,120,100,.75); }
 
-/* lasers & stroboscope (soft: ≤ 1 flash per second, low opacity, off with reduced motion) */
-.tk-lasers { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
-.tk-lasers i {
-  position: absolute; top: -10%; left: 50%; width: 2px; height: 140%; transform-origin: 50% 0;
-  background: linear-gradient(180deg, currentColor, transparent 85%); filter: drop-shadow(0 0 6px currentColor); opacity: .75;
-  animation: tk-sweep 4s ease-in-out infinite alternate;
-}
-@keyframes tk-sweep { from { transform: rotate(var(--a)); } to { transform: rotate(calc(var(--a) * -1)); } }
-.tk-strobe { position: absolute; inset: 0; background: #fff; mix-blend-mode: overlay; pointer-events: none; animation: tk-strobe 1.2s steps(1) infinite; }
-@keyframes tk-strobe { 0% { opacity: .1; } 12% { opacity: 0; } 100% { opacity: 0; } }
-.tk-tape {
-  background: repeating-linear-gradient(-45deg, #c6ff00 0 18px, #0a000f 18px 36px);
-  color: #0a000f; font-family: 'Bungee', sans-serif; box-shadow: 0 0 30px -4px #c6ff00;
-}
-.tk-tape span { background: #c6ff00; padding: 0 10px; }
-.tk-sticker {
-  font-family: 'Bungee', sans-serif; background: #fff; color: #0a000f; border: 3px solid #0a000f;
-  box-shadow: 4px 4px 0 #ff1fae; padding: 4px 10px; border-radius: 10px;
-}
-@keyframes tk-glitch {
-  0%, 92%, 100% { transform: none; text-shadow: none; }
-  93% { transform: translate(-3px, 1px) skewX(-8deg); text-shadow: 3px 0 #00e5ff, -3px 0 #ff1fae; }
-  95% { transform: translate(3px, -1px); text-shadow: -3px 0 #c6ff00, 3px 0 #ff1fae; }
-  97% { transform: translate(-1px, 0) skewX(6deg); }
-}
-.tk-glitch { animation: tk-glitch 3s infinite; }
+/* stage: spotlights, drifting smoke, rising embers, rare lightning */
+.tk-spot { position: absolute; top: -10%; width: 46%; height: 120%; pointer-events: none; mix-blend-mode: screen;
+  background: linear-gradient(180deg, rgba(255,60,40,.55), rgba(255,42,26,.08) 55%, transparent 80%);
+  clip-path: polygon(45% 0, 55% 0, 100% 100%, 0 100%); filter: blur(6px); transform-origin: 50% 0; animation: tk-spot 7s ease-in-out infinite alternate; }
+@keyframes tk-spot { from { transform: rotate(var(--a)); } to { transform: rotate(calc(var(--a) * -0.6)); } }
+.tk-smoke { position: absolute; border-radius: 9999px; background: rgba(160,150,150,.16); filter: blur(40px); animation: tk-smoke 16s ease-in-out infinite alternate; pointer-events: none; }
+@keyframes tk-smoke { from { transform: translate3d(-10%, 0, 0) scale(1); } to { transform: translate3d(12%, -8%, 0) scale(1.25); } }
+.tk-ember { position: absolute; bottom: -10px; width: 3px; height: 3px; border-radius: 9999px; background: #ffb070; box-shadow: 0 0 8px 2px #ff4a1a; animation: tk-ember linear infinite; pointer-events: none; }
+@keyframes tk-ember { 0% { transform: translate(0, 0); opacity: 0; } 10% { opacity: 1; } 100% { transform: translate(var(--dx), -110vh); opacity: 0; } }
+.tk-lightning { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 0%, rgba(255,230,220,.35), transparent 60%); opacity: 0; animation: tk-lightning 9s infinite; pointer-events: none; }
+@keyframes tk-lightning { 0%, 94%, 100% { opacity: 0; } 95% { opacity: .9; } 96% { opacity: .1; } 97% { opacity: .6; } }
+@keyframes tk-logo-burn { 0%, 100% { filter: drop-shadow(0 0 10px rgba(255,42,26,.7)) drop-shadow(0 0 40px rgba(255,42,26,.35)); } 50% { filter: drop-shadow(0 0 18px rgba(255,60,30,.95)) drop-shadow(0 0 60px rgba(255,42,26,.55)); } }
+.tk-logo-burn { animation: tk-logo-burn 3.2s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) {
-  .tk-lasers i, .tk-strobe, .tk-glitch, html[data-mode='crackhead'] .tk-aurora { animation: none !important; }
-  .tk-strobe { display: none; }
+  .tk-spot, .tk-smoke, .tk-ember, .tk-lightning, .tk-logo-burn { animation: none !important; }
+  .tk-ember, .tk-lightning { display: none; }
 }

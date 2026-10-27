@@ -1,4 +1,5 @@
 import { CocktailRecipe } from '../types/cocktail';
+import { HIGH_RISK_IDS } from './flash';
 import { CatalogRecipe, Glass, Ice } from './types';
 import { INGREDIENTS } from './ingredients';
 import { formatQty, GLASS_NAME } from './build';
@@ -71,6 +72,8 @@ export function toCocktailRecipe(c: CatalogRecipe): CocktailRecipe {
     garnish: c.garnish,
     tastes: c.tastes,
     provenanceLabel: PROVENANCE_LABEL[c.provenance.kind],
+    pack: c.pack,
+    riskNote: HIGH_RISK_IDS.has(c.id) ? 'Produit très fortement dosé : une seule unité peut dépasser plusieurs verres standard. Bois lentement, alterne avec de l’eau, ne mélange pas avec d’autres alcools.' : undefined,
     timerSeconds: c.method === 'shake' || c.method === 'dry-shake' || c.method === 'shake-top' ? 12 : undefined,
   };
 }
@@ -99,6 +102,7 @@ export function artFor(c: CocktailRecipe): CocktailArtProps {
   return {
     color: c.color ?? THEME_COLOR[c.tasteProfile?.colorTheme ?? 'dark-berry'] ?? '#ff4f8b',
     glass: c.glassKind ?? glassFromText(c.glassType),
+    pack: c.pack,
     ice: (c.iceKind as Ice) ?? 'cubes',
     garnish: c.garnish ?? c.ingredients?.find((i) => i.category === 'garniture')?.name,
     sparkling: tastes.includes('petillant') || /tonic|gazeuse|soda|prosecco|champagne|ginger|limonade|cola/.test(text),

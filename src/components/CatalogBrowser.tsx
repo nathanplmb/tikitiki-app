@@ -7,6 +7,9 @@ import { BaseSpirit, Taste } from '../catalog/types';
 import { toCocktailRecipe } from '../catalog/adapter';
 import { CocktailRecipe } from '../types/cocktail';
 import { RecipeCard } from './ui';
+import { COLLECTIONS } from '../catalog/collections';
+import { getStoredMode, getActiveCatalog } from '../catalog/active';
+import { CocktailArt } from './CocktailArt';
 
 interface Props {
   barIds: Set<string>;
@@ -15,6 +18,7 @@ interface Props {
   favoriteIds: string[];
   preferredTastes: Taste[];
   initialTastes?: Taste[];
+  initialCollection?: string;
   onOpen: (c: CocktailRecipe) => void;
 }
 
@@ -26,7 +30,10 @@ const Chip: React.FC<{ on: boolean; onClick: () => void; children: React.ReactNo
 );
 
 /** Catalog search: works offline, no AI. Filters change the actual results. */
-export const CatalogBrowser: React.FC<Props> = ({ barIds, barKnown, recentIds, favoriteIds, preferredTastes, initialTastes, onOpen }) => {
+export const CatalogBrowser: React.FC<Props> = ({ barIds, barKnown, recentIds, favoriteIds, preferredTastes, initialTastes, initialCollection, onOpen }) => {
+  const collections = COLLECTIONS[getStoredMode()];
+  const [collectionId, setCollectionId] = useState<string | undefined>(initialCollection);
+  const collection = collections.find((c) => c.id === collectionId);
   const [query, setQuery] = useState('');
   const [tastes, setTastes] = useState<Taste[]>(initialTastes ?? []);
   const [bases, setBases] = useState<BaseSpirit[]>([]);
@@ -41,7 +48,7 @@ export const CatalogBrowser: React.FC<Props> = ({ barIds, barKnown, recentIds, f
     () => searchCatalog({ query: q, tastes, bases, alcohol, maxMinutes, onlyMakeable: barKnown && onlyMakeable },
       { bar: barKnown ? barIds : undefined, recentIds, favoriteIds, preferredTastes }),
     [q, tastes.join(), bases.join(), alcohol, maxMinutes, onlyMakeable, barIds, barKnown, recentIds.join()]
-  );
+  ).filter((m) => !collection || collection.match(m.recipe));
   const groups = barKnown
     ? [
         { key: 'ready', title: 'Réalisables tout de suite', items: results.filter((r) => r.availability === 'ready') },
@@ -56,6 +63,29 @@ export const CatalogBrowser: React.FC<Props> = ({ barIds, barKnown, recentIds, f
 
   return (
     <div className="space-y-4">
+      {/* Collections */}
+      <div className="tk-scroll-x gap-3 -mx-4 px-4 pb-1">
+        {collections.map((c) => {
+          const items = getActiveCatalog().filter(c.match);
+          const on = c.id === collectionId;
+          return (
+            <motion.button key={c.id} whileTap={{ scale: 0.95 }} onClick={() => setCollectionId(on ? undefined : c.id)} aria-pressed={on}
+              style={{ ['--drink' as string]: c.color }}
+              className={`tk-glass relative w-[168px] h-[118px] rounded-[22px] overflow-hidden text-left p-3 flex flex-col justify-end transition-all ${on ? 'ring-2 ring-[var(--drink)] shadow-[0_0_30px_-6px_var(--drink)]' : ''}`}>
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_85%_20%,color-mix(in_srgb,var(--drink)_55%,transparent),transparent_60%)]" />
+              <div className="absolute -right-3 -top-2 flex">
+                {items.slice(0, 3).map((r, i) => (
+                  <div key={r.id} className="w-12 h-16 -ml-5" style={{ transform: `rotate(${(i - 1) * 10}deg)` }}>
+                    <CocktailArt color={r.color} glass={r.glass} ice={r.ice} pack={r.pack} garnish={r.garnish} animated={false} glow={false} className="w-full h-full" />
+                  </div>
+                ))}
+              </div>
+              <div className="relative tk-mono text-[8.5px] text-white/60">{c.kicker} · {items.length}</div>
+              <div className="relative tk-display text-[19px] text-white leading-tight">{c.title}</div>
+            </motion.button>
+          );
+        })}
+      </div>
       <div className="flex gap-2">
         <label className="tk-glass flex-1 h-12 rounded-full flex items-center gap-2 px-4">
           <Search className="w-4 h-4 text-white/50" />

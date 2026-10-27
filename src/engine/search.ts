@@ -151,7 +151,7 @@ export function dailyPick(date = new Date(), catalog: CatalogRecipe[] = getActiv
 /** Party menu from the catalog: diverse, makeable-first, with an alcohol-free option and consolidated shopping. */
 export function planParty(opts: { guests: number; drinksPerGuest?: number; tastes?: Taste[]; bar?: Set<string> }) {
   const ranked = searchCatalog({ tastes: opts.tastes, alcohol: 'with', maxDifficulty: 2 }, { bar: opts.bar })
-    .filter((m) => m.recipe.family !== 'hot' && m.recipe.family !== 'shot');
+    .filter((m) => m.recipe.family !== 'hot' && m.recipe.family !== 'shot' && m.recipe.family !== 'neat');
   const menu: Match[] = [];
   for (const m of ranked) {
     if (menu.length >= 3) break;

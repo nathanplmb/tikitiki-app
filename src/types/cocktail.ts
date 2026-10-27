@@ -72,6 +72,8 @@ export interface CocktailRecipe {
   garnish?: string;
   tastes?: import('../catalog/types').Taste[];
   provenanceLabel?: string;
+  pack?: import('../catalog/types').Pack;
+  riskNote?: string;
 }
 
 export interface CreationConfig {

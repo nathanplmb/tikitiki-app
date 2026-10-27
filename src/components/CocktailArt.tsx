@@ -1,5 +1,5 @@
 import React, { useId } from 'react';
-import type { Glass, Ice } from '../catalog/types';
+import type { Glass, Ice, Pack } from '../catalog/types';
 
 // Procedural, offline cocktail portrait: glass silhouette, liquid in the drink's colour,
 // ice, bubbles and garnish. Consistent framing for every recipe, no external image needed.
@@ -29,6 +29,10 @@ const SHAPES: Record<Glass, Shape> = {
   copper: { bowl: 'M48 96 L56 226 Q100 234 144 226 L152 96 Z', rim: [96, 48, 152], fill: 116, bottom: 230, handle: 'M152 120 Q184 124 182 160 Q180 196 146 198' },
   shot: { bowl: 'M70 150 L76 228 Q100 233 124 228 L130 150 Z', rim: [150, 70, 130], fill: 162, bottom: 230 },
   julep: { bowl: 'M54 84 L60 228 Q100 236 140 228 L146 84 Z', rim: [84, 54, 146], fill: 100, bottom: 232 },
+  slimcan: { bowl: 'M70 40 L130 40 L130 228 Q100 236 70 228 Z', rim: [40, 70, 130], fill: 48, bottom: 232 },
+  ball: { bowl: 'M88 70 L112 70 L112 84 A62 62 0 1 1 88 84 Z', rim: [70, 88, 112], fill: 120, bottom: 232 },
+  can: { bowl: 'M58 52 L142 52 L142 228 Q100 236 58 228 Z', rim: [52, 58, 142], fill: 60, bottom: 232 },
+  bottle: { bowl: 'M86 40 L114 40 L114 58 Q142 70 142 98 L142 222 Q142 234 128 234 L72 234 Q58 234 58 222 L58 98 Q58 70 86 58 Z', rim: [40, 86, 114], fill: 76, bottom: 234 },
   solo: { bowl: 'M44 66 L60 230 Q100 238 140 230 L156 66 Z', rim: [66, 44, 156], fill: 84, bottom: 234 },
   irish: { bowl: 'M56 64 Q52 160 100 168 Q148 160 144 64 Z', rim: [64, 56, 144], fill: 76, bottom: 168, stem: 'M98 168 L98 222 M66 230 Q100 216 134 230', handle: 'M144 90 Q172 96 168 124 Q164 146 140 146' },
 };
@@ -58,6 +62,7 @@ export interface CocktailArtProps {
   glow?: boolean;
   /** Party cup look: opaque red (hero) or clear plastic so the drink colour shows. */
   cup?: 'red' | 'clear';
+  pack?: Pack;
 }
 
 export const CocktailArt: React.FC<CocktailArtProps> = ({
@@ -71,13 +76,15 @@ export const CocktailArt: React.FC<CocktailArtProps> = ({
   animated = true,
   glow = true,
   cup = 'clear',
+  pack,
 }) => {
   const uid = useId().replace(/:/g, '');
   const s = SHAPES[glass] ?? SHAPES.rocks;
   const [ry, rx1, rx2] = s.rim;
   const g = garnishKind(garnish);
   const w = rx2 - rx1;
-  const cubes = ice === 'cubes' || ice === 'large' ? (ice === 'large' ? 1 : Math.max(2, Math.round(w / 34))) : 0;
+  const opaque = glass === 'can' || glass === 'slimcan';
+  const cubes = glass === 'bottle' || opaque || glass === 'ball' ? 0 : ice === 'cubes' || ice === 'large' ? (ice === 'large' ? 1 : Math.max(2, Math.round(w / 34))) : 0;
 
   // Deterministic condensation droplets on the outside of the glass
   const drops = Array.from({ length: 16 }, (_, i) => ({
@@ -211,7 +218,7 @@ export const CocktailArt: React.FC<CocktailArtProps> = ({
           </>
         ) : null}
         {/* condensation */}
-        {(ice !== 'none') && drops.map((d, i) => (
+        {(ice !== 'none' || glass === 'can') && drops.map((d, i) => (
           <g key={i}>
             <circle cx={d.x} cy={d.y} r={d.r} fill={`url(#dr${uid})`} opacity="0.75" />
             <circle cx={d.x - d.r * 0.3} cy={d.y - d.r * 0.35} r={d.r * 0.3} fill="#fff" />
@@ -222,9 +229,9 @@ export const CocktailArt: React.FC<CocktailArtProps> = ({
       {/* silhouette: soft thick edge + crisp highlight line */}
       <path d={s.bowl} fill="none" stroke="#e8f6ff" strokeOpacity="0.18" strokeWidth="5" filter={`url(#bs${uid})`} />
       <path d={s.bowl} fill="none" stroke="#fff" strokeOpacity="0.62" strokeWidth="1" />
-      <ellipse cx="100" cy={ry} rx={w / 2} ry="4.5" fill="none" stroke="#fff" strokeOpacity="0.85" strokeWidth="1.1" />
-      <ellipse cx="100" cy={ry + 1.5} rx={w / 2 - 2} ry="3" fill="none" stroke="#fff" strokeOpacity="0.25" strokeWidth="1.5" />
-      <path d={`M${rx1 + w * 0.15} ${ry - 2.5} Q100 ${ry - 6} ${rx2 - w * 0.25} ${ry - 3}`} stroke="#fff" strokeWidth="1.6" strokeLinecap="round" fill="none" opacity="0.9" />
+      {glass !== 'bottle' && !opaque && glass !== 'ball' && <ellipse cx="100" cy={ry} rx={w / 2} ry="4.5" fill="none" stroke="#fff" strokeOpacity="0.85" strokeWidth="1.1" />}
+      {glass !== 'bottle' && !opaque && glass !== 'ball' && <ellipse cx="100" cy={ry + 1.5} rx={w / 2 - 2} ry="3" fill="none" stroke="#fff" strokeOpacity="0.25" strokeWidth="1.5" />}
+      {glass !== 'bottle' && !opaque && glass !== 'ball' && <path d={`M${rx1 + w * 0.15} ${ry - 2.5} Q100 ${ry - 6} ${rx2 - w * 0.25} ${ry - 3}`} stroke="#fff" strokeWidth="1.6" strokeLinecap="round" fill="none" opacity="0.9" />}
       {s.stem && (
         <>
           <path d={s.stem} fill="none" stroke="#e8f6ff" strokeOpacity="0.25" strokeWidth="6" strokeLinecap="round" filter={`url(#bs${uid})`} />
@@ -232,6 +239,62 @@ export const CocktailArt: React.FC<CocktailArtProps> = ({
         </>
       )}
       {s.handle && <path d={s.handle} fill="none" stroke={glass === 'copper' ? '#d08a52' : 'rgba(232,246,255,0.6)'} strokeWidth="5" strokeLinecap="round" />}
+      {glass === 'bottle' && (
+        <>
+          {/* 50 cl clear PET water bottle: wavy shoulder rings, label band, ribbed lower body, translucent cap */}
+          {[66, 74, 82].map((y, i) => <path key={y} d={`M${88 - i * 9} ${y} Q100 ${y + 4} ${112 + i * 9} ${y}`} stroke="#fff" strokeOpacity="0.5" strokeWidth="1.2" fill="none" />)}
+          <path d="M58 100 Q100 106 142 100 L142 140 Q100 146 58 140 Z" fill="#0b0b0d" opacity="0.92" />
+          <path d="M58 100 Q100 106 142 100" stroke="#ff2a1a" strokeWidth="1.4" fill="none" />
+          <path d="M58 140 Q100 146 142 140" stroke="#ff2a1a" strokeWidth="1.4" fill="none" />
+          <text x="100" y="127" textAnchor="middle" fontFamily="Metal Mania, Bungee, serif" fontSize="16" fill="#ff2a1a" style={{ filter: 'drop-shadow(0 0 3px #ff2a1a)' }}>TikiTiki</text>
+          <text x="134" y="137" textAnchor="end" fontFamily="Plus Jakarta Sans, sans-serif" fontSize="6" fontWeight="700" fill="#fff" opacity="0.8">50cl</text>
+          {Array.from({ length: 8 }).map((_, i) => {
+            const y = 156 + i * 9.5;
+            return (
+              <g key={y}>
+                <path d={`M58 ${y} Q100 ${y + 5} 142 ${y}`} stroke="#fff" strokeOpacity="0.5" strokeWidth="1.1" fill="none" />
+                <path d={`M58 ${y + 3} Q100 ${y + 8} 142 ${y + 3}`} stroke="#000" strokeOpacity="0.22" strokeWidth="1" fill="none" />
+              </g>
+            );
+          })}
+          <path d="M60 226 Q70 236 80 228 Q90 238 100 229 Q110 238 120 228 Q130 236 140 226" stroke="#fff" strokeOpacity="0.4" strokeWidth="1" fill="none" />
+          <rect x="85" y="56" width="30" height="3.5" rx="1.75" fill="#fff" opacity="0.75" />
+          <rect x="84" y="20" width="32" height="22" rx="4" fill="#f4f7fa" opacity="0.82" />
+          {[0, 1, 2, 3, 4, 5, 6].map((i) => <rect key={i} x={87 + i * 4.2} y="22" width="1.4" height="18" rx="0.7" fill="#b9c6d2" opacity="0.8" />)}
+          <rect x="86" y="21" width="5" height="20" rx="2.5" fill="#fff" />
+          <rect x="83" y="41" width="34" height="3.5" rx="1.75" fill="#e6edf3" opacity="0.9" />
+        </>
+      )}
+      {opaque && (() => {
+        const L = glass === 'can' ? 58 : 70, R = glass === 'can' ? 142 : 130, T = glass === 'can' ? 64 : 52;
+        const bg = pack?.bg ?? color, band = pack?.band ?? '#0b0b0d', ink = pack?.ink ?? '#fff';
+        const mid = (T + 224) / 2;
+        return (
+          <>
+            {/* aluminium can: printed sleeve in the product's colour code, central band, pull tab */}
+            <path d={`M${L} ${T} L${R} ${T} L${R} 222 Q100 232 ${L} 222 Z`} fill={bg} />
+            <path d={`M${L} ${mid - 26} L${R} ${mid - 26} L${R} ${mid + 22} L${L} ${mid + 22} Z`} fill={band} />
+            <text x="100" y={mid + 6} textAnchor="middle" fontFamily="Bungee, Plus Jakarta Sans, sans-serif" fontSize={glass === 'can' ? (pack && pack.text.length > 5 ? 13 : 20) : 11} fill={ink}>{pack?.text ?? ''}</text>
+            <path d={`M${L} ${T} L${R} ${T} L${R} 222 Q100 232 ${L} 222 Z`} fill={`url(#la${uid})`} />
+            <rect x={L + 8} y={T + 6} width="8" height={152} rx="4" fill="#fff" opacity="0.32" />
+            <rect x={R - 14} y={T + 6} width="4" height={152} rx="2" fill="#fff" opacity="0.15" />
+            <path d={`M${L + 4} ${T - 12} L${R - 4} ${T - 12} L${R} ${T} L${L} ${T} Z`} fill="#c9ced4" />
+            <ellipse cx="100" cy={T - 12} rx={(R - L) / 2 - 4} ry="6" fill="#e7ebef" stroke="#9aa2ab" strokeWidth="1" />
+            <ellipse cx="96" cy={T - 13} rx="9" ry="3" fill="#aab2bb" />
+            <path d={`M${L} 222 Q100 232 ${R} 222 L${R - 4} 230 Q100 238 ${L + 4} 230 Z`} fill="#b8bec5" />
+          </>
+        );
+      })()}
+      {glass === 'ball' && (
+        <>
+          {/* spherical 20 cl plastic bottle: liquid visible, wrap-around band, black screw cap */}
+          <path d="M40 150 Q100 166 160 150 L158 176 Q100 192 42 176 Z" fill={pack?.band ?? '#111'} opacity="0.92" />
+          <text x="100" y="174" textAnchor="middle" fontFamily="Bungee, sans-serif" fontSize="12" fill={pack?.ink ?? '#fff'}>{pack?.text ?? ''}</text>
+          <ellipse cx="78" cy="120" rx="10" ry="26" fill="#fff" opacity="0.35" transform="rotate(25 78 120)" />
+          <rect x="86" y="52" width="28" height="20" rx="4" fill="#141414" />
+          {[0, 1, 2, 3, 4].map((i) => <rect key={i} x={89 + i * 5} y="54" width="1.5" height="16" fill="#333" />)}
+        </>
+      )}
       {glass === 'solo' && cup === 'red' && (
         <>
           {/* opaque red party cup: liquid only visible at the top, white inside lip, moulded ridges */}

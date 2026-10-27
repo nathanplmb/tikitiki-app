@@ -58,6 +58,7 @@ export const FAMILY_LABEL: Record<Family, string> = {
   hot: 'Boissons chaudes',
   shot: 'Shots',
   champagne: 'À bulles',
+  neat: 'Sans mélange',
 };
 
 /** Free-text words mapped to structured criteria. */

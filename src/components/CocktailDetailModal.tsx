@@ -372,6 +372,9 @@ export const CocktailDetailModal: React.FC<CocktailDetailModalProps> = ({
                 <span className="inline-flex items-center gap-2 flex-wrap"><SourceBadge c={cocktail} /> <span>{cocktail.tagline}</span></span>
               </div>
 
+              {cocktail.riskNote && (
+                <div role="alert" className="my-2 rounded-2xl border border-[#ff2a1a]/60 bg-[#ff2a1a]/12 px-3 py-2 text-[12px] text-white/90">⚠ {cocktail.riskNote}</div>
+              )}
               <h2 className="font-serif text-3xl sm:text-4xl text-white font-normal leading-tight">
                 {cocktail.name}
               </h2>

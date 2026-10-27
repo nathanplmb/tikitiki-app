@@ -71,7 +71,8 @@ export default function App() {
   const [labConfig, setLabConfig] = useState<Partial<CreationConfig> | undefined>();
   const [discoverTastes, setDiscoverTastes] = useState<Taste[] | undefined>();
   const [discoverMode, setDiscoverMode] = useState<'swipe' | 'catalog'>('swipe');
-  const openCatalog = (tastes?: Taste[]) => { setDiscoverTastes(tastes); setDiscoverMode('catalog'); go('discoveries'); };
+  const [discoverCollection, setDiscoverCollection] = useState<string | undefined>();
+  const openCatalog = (tastes?: Taste[], collection?: string) => { setDiscoverTastes(tastes); setDiscoverCollection(collection); setDiscoverMode('catalog'); go('discoveries'); };
 
   useEffect(() => {
     fetch('/api/ai/status').then((r) => r.json()).then(setAiStatus).catch(() => setAiStatus({ configured: false }));
@@ -271,6 +272,7 @@ export default function App() {
                 onOpenRoulette={() => { setDiscoverTastes(undefined); setDiscoverMode('swipe'); go('discoveries'); }}
                 onOpenParty={() => go('party')}
                 onOpenShopping={() => setIsShoppingOpen(true)}
+                onOpenCollection={(id) => openCatalog(undefined, id)}
               />
             )}
             {activeTab === 'home' && mode === 'chic' && (
@@ -362,6 +364,7 @@ export default function App() {
                 favoriteIds={favoriteIds}
                 preferredTastes={preferredTastes}
                 initialTastes={discoverTastes}
+                initialCollection={discoverCollection}
                 mode={discoverMode}
                 onModeChange={setDiscoverMode}
                 onSelectCocktail={openCocktail}

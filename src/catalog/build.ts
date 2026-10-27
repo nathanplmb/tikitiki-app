@@ -86,6 +86,10 @@ const GLASS_LABEL: Record<Glass, string> = {
   irish: 'un verre à irish coffee',
   pint: 'un verre à bière',
   solo: 'un gobelet en plastique',
+  bottle: 'une petite bouteille de 50 cl',
+  can: 'une canette de 50 cl',
+  slimcan: 'une canette slim',
+  ball: 'une boule de 20 cl',
 };
 
 export const GLASS_NAME: Record<Glass, string> = {
@@ -106,6 +110,10 @@ export const GLASS_NAME: Record<Glass, string> = {
   irish: 'Verre irish coffee',
   pint: 'Pinte',
   solo: 'Gobelet',
+  bottle: 'Bouteille 50 cl',
+  can: 'Canette 50 cl',
+  slimcan: 'Canette slim',
+  ball: 'Boule 20 cl',
 };
 
 const ICE_TEXT: Record<Ice, string> = {
@@ -127,6 +135,17 @@ export function generateSteps(r: { method: Method; glass: Glass; ice: Ice; garni
   const body = r.ingredients.filter((i) => i.unit !== 'top' && i.id !== 'ice' && !(r.method === 'muddle' && muddled.includes(i)));
   const glass = GLASS_LABEL[r.glass];
   const steps: string[] = [];
+  if (r.glass === 'bottle' && (r.method === 'build' || r.method === 'build-top')) {
+    // Pre-mix straight in a 50 cl soft-drink or water bottle, the pre-party way.
+    const spirits = r.ingredients.filter((i) => i.unit !== 'top' && INGREDIENTS[i.id].alcoholic);
+    const softs = r.ingredients.filter((i) => !INGREDIENTS[i.id].alcoholic && i.id !== 'ice');
+    steps.push(
+      `Prendre une bouteille de 50 cl de ${softs.map((i) => INGREDIENTS[i.id].name.toLowerCase()).join(' et ') || 'soft'} bien fraîche et en boire ou retirer un peu pour faire de la place.`,
+      spirits.length ? `Verser ${list(spirits)} dans la bouteille.` : 'Compléter la bouteille avec les autres ingrédients.',
+      'Refermer et retourner doucement deux ou trois fois (sans secouer si c’est gazeux). À garder au frais.'
+    );
+    return steps;
+  }
   switch (r.method) {
     case 'shake':
       steps.push(`Verser dans un shaker : ${list(body)}.`, 'Remplir de glaçons et frapper énergiquement 10 à 12 secondes.', `Filtrer dans ${glass} ${ICE_TEXT[r.ice]}.`);
@@ -192,6 +211,7 @@ export type Row = {
   aka?: string[];
   steps?: string[];
   subs?: CatalogRecipe['substitutions'];
+  pack?: CatalogRecipe['pack'];
 };
 
 const PROV: Record<Row['p'], Provenance> = { i: { kind: 'iba' }, c: { kind: 'classic' }, t: { kind: 'tikitiki' } };
@@ -221,5 +241,6 @@ export function buildRecipe(r: Row): CatalogRecipe {
     strength: alcoholic ? r.st : 0,
     substitutions: r.subs,
     provenance: PROV[r.p],
+    pack: r.pack,
   };
 }

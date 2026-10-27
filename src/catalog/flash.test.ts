@@ -37,3 +37,21 @@ describe('crackhead flash catalog', () => {
     expect(p.menu.length).toBeGreaterThan(0);
   });
 });
+
+describe('épicerie de nuit shelf', () => {
+  it('includes the researched ready-to-drink products with packaging colours', () => {
+    for (const id of ['huit-six-original', 'huit-six-red', 'huit-six-gold', 'huit-six-extreme', 'huit-six-cherry', 'buzzball-type', 'vody-type', 'smirnoff-ice-type', 'jack-coke-can']) {
+      const r = FLASH_CATALOG.find((x) => x.id === id);
+      expect(r, id).toBeDefined();
+      if (r!.glass !== 'solo') expect(r!.pack, id).toBeDefined();
+    }
+  });
+  it('finds products by street names', () => {
+    expect(searchCatalog({ query: 'buzzballz' }, {}, FLASH_CATALOG)[0].recipe.id).toBe('buzzball-type');
+    expect(searchCatalog({ query: 'vody' }, {}, FLASH_CATALOG)[0].recipe.id).toBe('vody-type');
+    expect(searchCatalog({ query: '8.6 cherry' }, {}, FLASH_CATALOG)[0].recipe.id).toBe('huit-six-cherry');
+  });
+  it('never puts straight products in a party menu', () => {
+    for (const m of planParty({ guests: 6 }).menu) expect(m.recipe.family).not.toBe('neat');
+  });
+});
