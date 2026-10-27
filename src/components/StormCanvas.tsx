@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 
 // Crackhead storm engine (one canvas): drifting storm clouds lit from inside by each strike,
-// slanted rain, branching lightning from any edge, impact spark showers and crackling plasma arcs.
+// floating charged particles, branching lightning from any edge, impact spark showers and crackling plasma arcs.
 // Everything is tinted with the current --accent colour.
 // 'hero' = dense top-of-home storm; 'ambient' = lighter layer behind the whole app.
 // Reduced motion: a single static frame of clouds, no flashes.
@@ -108,7 +108,8 @@ export const StormCanvas: React.FC<{ variant?: 'hero' | 'ambient'; fixed?: boole
       speed: (0.004 + Math.random() * 0.008) * (Math.random() < 0.5 ? -1 : 1),
       shade: 0.25 + Math.random() * 0.35,
     }));
-    const rain = Array.from({ length: hero ? 110 : 60 }, () => ({ x: Math.random(), y: Math.random(), l: 10 + Math.random() * 18, v: 0.6 + Math.random() * 0.6 }));
+    // charged particles: slow upward drift with a wobble, twinkle, flare on every strike
+  const ions = Array.from({ length: hero ? 70 : 40 }, () => ({ x: Math.random(), y: Math.random(), r: 0.6 + Math.random() * 1.6, v: 0.01 + Math.random() * 0.03, ph: Math.random() * Math.PI * 2 }));
     let bolts: Bolt[] = [];
     let sparks: Spark[] = [];
     let arcs: Arc[] = [];
@@ -179,21 +180,26 @@ export const StormCanvas: React.FC<{ variant?: 'hero' | 'ambient'; fixed?: boole
         }
       }
 
-      // rain
-      if (!reduced) {
-        ctx.strokeStyle = 'rgba(220,230,255,0.16)';
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        for (const d of rain) {
-          d.y += d.v * dt;
-          d.x -= d.v * dt * 0.25;
-          if (d.y > 1) { d.y = -0.05; d.x = Math.random() * 1.2; }
-          const x = d.x * w, y = d.y * h;
-          ctx.moveTo(x, y);
-          ctx.lineTo(x - d.l * 0.25, y + d.l);
+      // charged particles
+      for (const p of ions) {
+        if (!reduced) {
+          p.y -= p.v * dt;
+          p.ph += dt * 2.2;
+          if (p.y < -0.02) { p.y = 1.02; p.x = Math.random(); }
         }
-        ctx.stroke();
+        const x = (p.x + Math.sin(p.ph) * 0.006) * w, y = p.y * h;
+        const tw = 0.35 + 0.65 * Math.abs(Math.sin(p.ph * 1.7));
+        const glow = Math.min(1, tw * 0.6 + flash * 1.2);
+        ctx.globalAlpha = glow;
+        ctx.fillStyle = flash > 0.3 ? '#ffffff' : accent;
+        ctx.shadowColor = accent;
+        ctx.shadowBlur = 6 + flash * 14;
+        ctx.beginPath();
+        ctx.arc(x, y, p.r * (1 + flash * 0.8), 0, Math.PI * 2);
+        ctx.fill();
       }
+      ctx.globalAlpha = 1;
+      ctx.shadowBlur = 0;
 
       // lightning
       bolts = bolts.filter((b) => now - b.t0 < 950);
