@@ -15,6 +15,8 @@ import { ShoppingListModal } from './components/ShoppingListModal';
 import { PartyPlannerView } from './components/PartyPlannerView';
 import { NeonLiquidShaker, GenStage } from './components/NeonLiquidShaker';
 import { Onboarding } from './components/Onboarding';
+import { CrackheadHome } from './components/CrackheadHome';
+import { AppMode, getStoredMode, setActiveMode } from './catalog/active';
 import { CocktailRecipe, CreationConfig, UserBarItem, ShoppingItem, UserTastePreferences, PartyPlan } from './types/cocktail';
 import {
   getFavorites, saveFavorites, getHistory, appendHistory, getUserBar, saveUserBar, getShoppingList, saveShoppingList,
@@ -29,7 +31,21 @@ import { sounds } from './utils/audio';
 
 type AiStatus = { configured: boolean } | null;
 
+// Apply the stored mode before the first render so searches use the right catalog.
+setActiveMode(getStoredMode());
+
 export default function App() {
+  const [mode, setMode] = useState<AppMode>(getStoredMode);
+  const [modeFlash, setModeFlash] = useState(false);
+  const switchMode = (m: AppMode) => {
+    if (m === mode) return;
+    setActiveMode(m);
+    setMode(m);
+    setSelectedCocktail(null);
+    setModeFlash(true);
+    setTimeout(() => setModeFlash(false), 450);
+    sounds.playGlassClink();
+  };
   const [activeTab, setActiveTab] = useState<ActiveTab>('home');
   const [favorites, setFavorites] = useState<CocktailRecipe[]>(getFavorites);
   const [history, setHistory] = useState<CocktailRecipe[]>(getHistory);
@@ -215,9 +231,17 @@ export default function App() {
       <Navigation activeTab={activeTab} setActiveTab={go} shoppingCount={shoppingCount} onOpenShopping={() => setIsShoppingOpen(true)} favoritesCount={favorites.length} />
 
       {/* Top bar */}
-      <header className="fixed top-0 inset-x-0 z-30 lg:pl-64 pointer-events-none">
+      <header className="fixed top-0 inset-x-0 z-30 lg:pl-64 pointer-events-none bg-gradient-to-b from-[var(--tk-bg)] via-[var(--tk-bg)]/70 to-transparent pb-4">
         <div className="max-w-3xl mx-auto px-4 pt-[calc(env(safe-area-inset-top)+10px)] flex items-center justify-between">
-          <button onClick={() => go('home')} className="pointer-events-auto tk-display text-[26px] text-white drop-shadow lg:invisible">TikiTiki</button>
+          <button onClick={() => go('home')} className="pointer-events-auto tk-display text-[22px] text-white drop-shadow lg:invisible">{mode === 'crackhead' ? 'TK!' : 'TikiTiki'}</button>
+          <div role="radiogroup" aria-label="Mode de l’application" className="pointer-events-auto tk-liquid rounded-full p-1 flex">
+            {(['chic', 'crackhead'] as const).map((m) => (
+              <button key={m} role="radio" aria-checked={mode === m} onClick={() => switchMode(m)} className="relative px-3 h-8 rounded-full text-[11px] font-bold">
+                {mode === m && <motion.span layoutId="mode-pill" className="tk-lens absolute inset-0 rounded-full" transition={{ type: 'spring', stiffness: 500, damping: 32 }} />}
+                <span className={`relative ${mode === m ? (m === 'crackhead' ? 'text-[#0a000f]' : 'text-white') : 'text-white/60'}`}>{m === 'chic' ? 'Chic' : 'Crackhead'}</span>
+              </button>
+            ))}
+          </div>
           <div className="flex gap-2 pointer-events-auto">
             <button onClick={() => setMuted(sounds.toggleMute())} aria-label={muted ? 'Activer les sons' : 'Couper les sons'} className="tk-liquid w-10 h-10 rounded-full flex items-center justify-center">
               {muted ? <VolumeX className="w-4 h-4 text-white/70" /> : <Volume2 className="w-4 h-4 text-white" />}
@@ -232,13 +256,24 @@ export default function App() {
 
       <div className="relative z-10 flex-1 flex flex-col lg:pl-64">
           <motion.main
-            key={activeTab}
+            key={activeTab + mode}
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
             className={`flex-1 w-full max-w-3xl mx-auto px-4 ${activeTab === 'home' ? '' : 'pt-[calc(env(safe-area-inset-top)+64px)]'}`}
           >
-            {activeTab === 'home' && (
+            {activeTab === 'home' && mode === 'crackhead' && (
+              <CrackheadHome
+                barIds={barIds}
+                barKnown={barKnown}
+                recentIds={recentIds}
+                onSelectCocktail={openCocktail}
+                onOpenRoulette={() => { setDiscoverTastes(undefined); setDiscoverMode('swipe'); go('discoveries'); }}
+                onOpenParty={() => go('party')}
+                onOpenShopping={() => setIsShoppingOpen(true)}
+              />
+            )}
+            {activeTab === 'home' && mode === 'chic' && (
               <Dashboard
                 onStartLab={() => { setLabMode('ai'); setCurrentRecipes([]); setLabConfig(undefined); go('lab'); }}
                 onOpenRoulette={() => { setDiscoverTastes(undefined); setDiscoverMode('swipe'); go('discoveries'); }}
@@ -378,6 +413,13 @@ export default function App() {
         onToggleItem={(id) => { const u = shoppingList.map((i) => (i.id === id ? { ...i, checked: !i.checked } : i)); setShoppingList(u); saveShoppingList(u); }}
         onClearList={() => { setShoppingList([]); saveShoppingList([]); }}
       />
+
+      <AnimatePresence>
+        {modeFlash && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: [0, 0.9, 0] }} exit={{ opacity: 0 }} transition={{ duration: 0.45 }}
+            className="fixed inset-0 z-[95] pointer-events-none" style={{ background: mode === 'crackhead' ? 'linear-gradient(120deg,#c6ff00,#ff1fae,#00e5ff)' : 'radial-gradient(circle,#fff,#ffb547)' }} />
+        )}
+      </AnimatePresence>
 
       <AnimatePresence>
         {toast && (

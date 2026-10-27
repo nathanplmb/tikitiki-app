@@ -356,3 +356,74 @@ body { background: var(--tk-bg); -webkit-tap-highlight-color: transparent; overs
     border: 0.5px solid rgba(255,255,255,0.45);
   }
 }
+
+/* =========================================================================
+   CRACKHEAD MODE — néon de boîte, gobelets rouges, stickers, lasers
+   ========================================================================= */
+html[data-mode='crackhead'] {
+  --tk-bg: #07000c;
+  --tk-accent: #ff1fae;
+  --tk-accent-2: #c6ff00;
+  --tk-accent-3: #00e5ff;
+  --tk-line: rgba(255, 31, 174, 0.35);
+}
+html[data-mode='crackhead'] body { background: #07000c; }
+html[data-mode='crackhead'] .tk-display {
+  font-family: 'Bungee', 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.01em; line-height: 0.95; font-style: normal;
+}
+html[data-mode='crackhead'] .tk-display.italic, html[data-mode='crackhead'] .tk-display .italic { font-style: normal; }
+html[data-mode='crackhead'] .tk-gradient-text {
+  background: linear-gradient(90deg, #c6ff00, #ff1fae 50%, #00e5ff);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(2px 0 0 rgba(0,229,255,.7)) drop-shadow(-2px 0 0 rgba(255,31,174,.7));
+}
+html[data-mode='crackhead'] .tk-glass {
+  background: linear-gradient(160deg, rgba(255,31,174,0.12), rgba(0,229,255,0.05) 60%, rgba(198,255,0,0.06));
+  border: 1px solid rgba(255,31,174,0.45);
+  box-shadow: 0 0 0 1px rgba(0,229,255,0.15), 0 0 26px -6px rgba(255,31,174,0.6), inset 0 1px 0 rgba(255,255,255,0.25);
+}
+html[data-mode='crackhead'] .tk-liquid {
+  border-color: rgba(198,255,0,0.55);
+  box-shadow: inset 0 1px 1px rgba(255,255,255,.8), 0 0 30px -6px rgba(255,31,174,.8), 0 0 0 1px rgba(0,229,255,.25);
+}
+html[data-mode='crackhead'] .tk-lens { background: linear-gradient(135deg, #c6ff00, #ff1fae); border-color: #fff; }
+html[data-mode='crackhead'] .tk-cta {
+  background: linear-gradient(100deg, #c6ff00, #ff1fae 50%, #00e5ff);
+  background-size: 200% 100%; color: #0a000f !important;
+  box-shadow: 0 0 0 2px #0a000f, 0 0 0 4px #c6ff00, 0 10px 40px -6px #ff1fae;
+  animation: tk-flow 2.4s linear infinite;
+}
+html[data-mode='crackhead'] .tk-chip[data-on='true'] { background: #c6ff00; border-color: #c6ff00; color: #0a000f; }
+html[data-mode='crackhead'] .tk-aurora { opacity: 1; filter: blur(60px) saturate(220%); animation: tk-hue 9s linear infinite; }
+@keyframes tk-hue { to { filter: blur(60px) saturate(220%) hue-rotate(360deg); } }
+
+/* lasers & stroboscope (soft: ≤ 1 flash per second, low opacity, off with reduced motion) */
+.tk-lasers { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.tk-lasers i {
+  position: absolute; top: -10%; left: 50%; width: 2px; height: 140%; transform-origin: 50% 0;
+  background: linear-gradient(180deg, currentColor, transparent 85%); filter: drop-shadow(0 0 6px currentColor); opacity: .75;
+  animation: tk-sweep 4s ease-in-out infinite alternate;
+}
+@keyframes tk-sweep { from { transform: rotate(var(--a)); } to { transform: rotate(calc(var(--a) * -1)); } }
+.tk-strobe { position: absolute; inset: 0; background: #fff; mix-blend-mode: overlay; pointer-events: none; animation: tk-strobe 1.2s steps(1) infinite; }
+@keyframes tk-strobe { 0% { opacity: .1; } 12% { opacity: 0; } 100% { opacity: 0; } }
+.tk-tape {
+  background: repeating-linear-gradient(-45deg, #c6ff00 0 18px, #0a000f 18px 36px);
+  color: #0a000f; font-family: 'Bungee', sans-serif; box-shadow: 0 0 30px -4px #c6ff00;
+}
+.tk-tape span { background: #c6ff00; padding: 0 10px; }
+.tk-sticker {
+  font-family: 'Bungee', sans-serif; background: #fff; color: #0a000f; border: 3px solid #0a000f;
+  box-shadow: 4px 4px 0 #ff1fae; padding: 4px 10px; border-radius: 10px;
+}
+@keyframes tk-glitch {
+  0%, 92%, 100% { transform: none; text-shadow: none; }
+  93% { transform: translate(-3px, 1px) skewX(-8deg); text-shadow: 3px 0 #00e5ff, -3px 0 #ff1fae; }
+  95% { transform: translate(3px, -1px); text-shadow: -3px 0 #c6ff00, 3px 0 #ff1fae; }
+  97% { transform: translate(-1px, 0) skewX(6deg); }
+}
+.tk-glitch { animation: tk-glitch 3s infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .tk-lasers i, .tk-strobe, .tk-glitch, html[data-mode='crackhead'] .tk-aurora { animation: none !important; }
+  .tk-strobe { display: none; }
+}

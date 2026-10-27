@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { motion, AnimatePresence, PanInfo } from 'motion/react';
 import { Dice5, Heart, X, ArrowRight } from 'lucide-react';
-import { CATALOG } from '../catalog/recipes';
+import { ALL_BY_ID, getActiveCatalog } from '../catalog/active';
 import { toCocktailRecipe, artFor } from '../catalog/adapter';
 import { CocktailRecipe } from '../types/cocktail';
 import { Family, Taste } from '../catalog/types';
@@ -29,7 +29,7 @@ const shuffle = <T,>(a: T[]) => [...a].sort(() => Math.random() - 0.5);
 
 /** Swipe deck: like = add to collection (and learn taste), pass = learn dislike. */
 const SwipeDeck: React.FC<{ onOpen: (c: CocktailRecipe) => void; onLike: (c: CocktailRecipe) => void; onPass: (c: CocktailRecipe) => void; exclude: string[] }> = ({ onOpen, onLike, onPass, exclude }) => {
-  const [deck, setDeck] = useState(() => shuffle(CATALOG.filter((r) => !exclude.includes(r.id))).slice(0, 30).map(toCocktailRecipe));
+  const [deck, setDeck] = useState(() => shuffle(getActiveCatalog().filter((r) => !exclude.includes(r.id))).slice(0, 30).map(toCocktailRecipe));
   const [dir, setDir] = useState(0);
   const top = deck[0];
   const next = (liked: boolean) => {
@@ -59,7 +59,7 @@ const SwipeDeck: React.FC<{ onOpen: (c: CocktailRecipe) => void; onLike: (c: Coc
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,color-mix(in_srgb,var(--drink)_55%,transparent),transparent_65%)]" />
                 <CocktailArt {...a} animated={isTop} className="absolute left-1/2 -translate-x-1/2 top-4 h-[62%]" />
                 <div className="absolute inset-x-0 bottom-0 p-5 bg-gradient-to-t from-black/80 to-transparent">
-                  <div className="tk-mono text-[9.5px] text-white/60">{FAMILY_LABEL[CATALOG.find((r) => r.id === c.catalogId)!.family]}</div>
+                  <div className="tk-mono text-[9.5px] text-white/60">{FAMILY_LABEL[ALL_BY_ID[c.catalogId!].family]}</div>
                   <div className="tk-display text-[44px] text-white">{c.name}</div>
                   <p className="text-[12.5px] text-white/70 line-clamp-2">{c.description}</p>
                   {isTop && <button onClick={() => onOpen(c)} className="mt-2 text-[12px] font-semibold text-white flex items-center gap-1">Voir la recette <ArrowRight className="w-3.5 h-3.5" /></button>}
@@ -90,7 +90,7 @@ export const DiscoveriesView: React.FC<Props> = (p) => {
     const iv = setInterval(() => {
       n++;
       sounds.playTick();
-      setRoulette(toCocktailRecipe(CATALOG[Math.floor(Math.random() * CATALOG.length)]));
+      setRoulette(toCocktailRecipe(getActiveCatalog()[Math.floor(Math.random() * getActiveCatalog().length)]));
       if (n > 14) { clearInterval(iv); setSpinning(false); sounds.playSuccessChime(); }
     }, 70);
   };
@@ -98,7 +98,7 @@ export const DiscoveriesView: React.FC<Props> = (p) => {
   return (
     <div className="tk-safe-bottom space-y-8 pt-2">
       <header>
-        <div className="tk-mono text-[10px] text-white/50">{CATALOG.length} recettes · hors ligne</div>
+        <div className="tk-mono text-[10px] text-white/50">{getActiveCatalog().length} recettes · hors ligne</div>
         <h1 className="tk-display text-[56px] text-white mt-1">Décou<span className="italic tk-gradient-text">vertes</span></h1>
         <div className="grid grid-cols-2 gap-1 p-1 mt-4 rounded-full tk-glass">
           {(['swipe', 'catalog'] as const).map((m) => (

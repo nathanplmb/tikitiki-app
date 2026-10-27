@@ -29,6 +29,7 @@ const SHAPES: Record<Glass, Shape> = {
   copper: { bowl: 'M48 96 L56 226 Q100 234 144 226 L152 96 Z', rim: [96, 48, 152], fill: 116, bottom: 230, handle: 'M152 120 Q184 124 182 160 Q180 196 146 198' },
   shot: { bowl: 'M70 150 L76 228 Q100 233 124 228 L130 150 Z', rim: [150, 70, 130], fill: 162, bottom: 230 },
   julep: { bowl: 'M54 84 L60 228 Q100 236 140 228 L146 84 Z', rim: [84, 54, 146], fill: 100, bottom: 232 },
+  solo: { bowl: 'M44 66 L60 230 Q100 238 140 230 L156 66 Z', rim: [66, 44, 156], fill: 84, bottom: 234 },
   irish: { bowl: 'M56 64 Q52 160 100 168 Q148 160 144 64 Z', rim: [64, 56, 144], fill: 76, bottom: 168, stem: 'M98 168 L98 222 M66 230 Q100 216 134 230', handle: 'M144 90 Q172 96 168 124 Q164 146 140 146' },
 };
 
@@ -55,6 +56,8 @@ export interface CocktailArtProps {
   className?: string;
   animated?: boolean;
   glow?: boolean;
+  /** Party cup look: opaque red (hero) or clear plastic so the drink colour shows. */
+  cup?: 'red' | 'clear';
 }
 
 export const CocktailArt: React.FC<CocktailArtProps> = ({
@@ -67,6 +70,7 @@ export const CocktailArt: React.FC<CocktailArtProps> = ({
   className = '',
   animated = true,
   glow = true,
+  cup = 'clear',
 }) => {
   const uid = useId().replace(/:/g, '');
   const s = SHAPES[glass] ?? SHAPES.rocks;
@@ -228,6 +232,25 @@ export const CocktailArt: React.FC<CocktailArtProps> = ({
         </>
       )}
       {s.handle && <path d={s.handle} fill="none" stroke={glass === 'copper' ? '#d08a52' : 'rgba(232,246,255,0.6)'} strokeWidth="5" strokeLinecap="round" />}
+      {glass === 'solo' && cup === 'red' && (
+        <>
+          {/* opaque red party cup: liquid only visible at the top, white inside lip, moulded ridges */}
+          <path d="M45 72 L60 230 Q100 238 140 230 L155 72 Q100 80 45 72 Z" fill="#d61f2c" />
+          <path d="M45 72 L60 230 Q100 238 140 230 L155 72 Q100 80 45 72 Z" fill={`url(#gw${uid})`} opacity="0.9" />
+          <rect x="58" y="96" width="9" height="122" rx="4" fill="#fff" opacity="0.28" />
+          {[120, 160, 200].map((y) => <path key={y} d={`M${46 + (y - 82) * 0.095} ${y} Q100 ${y + 5} ${154 - (y - 82) * 0.095} ${y}`} stroke="#8e0f19" strokeWidth="1.4" fill="none" opacity="0.7" />)}
+          {/* drink surface seen from above + rolled white rim */}
+          <ellipse cx="100" cy="70" rx="53" ry="7" fill={color} />
+          <ellipse cx="100" cy="70" rx="53" ry="7" fill="#fff" opacity="0.18" />
+          <ellipse cx="100" cy="68" rx="56" ry="8" fill="none" stroke="#f4f1ea" strokeWidth="3.2" />
+        </>
+      )}
+      {glass === 'solo' && cup === 'clear' && (
+        <>
+          {[120, 160, 200].map((y) => <path key={y} d={`M${46 + (y - 72) * 0.095} ${y} Q100 ${y + 5} ${154 - (y - 72) * 0.095} ${y}`} stroke="#fff" strokeWidth="1" fill="none" opacity="0.35" />)}
+          <ellipse cx="100" cy="66" rx="56" ry="7.5" fill="none" stroke="#fff" strokeOpacity="0.85" strokeWidth="2.6" />
+        </>
+      )}
       {glass === 'copper' && (
         <>
           <path d={s.bowl} fill="#b8693a" opacity="0.78" />

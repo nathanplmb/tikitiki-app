@@ -92,7 +92,8 @@ export type Glass =
   | 'shot'
   | 'julep'
   | 'irish'
-  | 'pint';
+  | 'pint'
+  | 'solo'; // red plastic party cup
 
 export type Method =
   | 'shake'
@@ -125,7 +126,9 @@ export type Provenance =
   /** Widely documented public-domain classic; quantities are TIKITIKI's own rendering. */
   | { kind: 'classic' }
   /** Recipe written for TIKITIKI (house creation, mostly alcohol-free drinks). */
-  | { kind: 'tikitiki' };
+  | { kind: 'tikitiki' }
+  /** Popular French pre-party mix (no single authoritative source). */
+  | { kind: 'flash' };
 
 export interface CatalogRecipe {
   id: string;

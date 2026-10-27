@@ -2,7 +2,7 @@ import React, { useMemo, useRef } from 'react';
 import { motion, useMotionValue, useScroll, useSpring, useTransform } from 'motion/react';
 import { ArrowRight, Sparkles, PartyPopper, Dice5, ShoppingBag, Wine } from 'lucide-react';
 import { CocktailRecipe, UserTastePreferences } from '../types/cocktail';
-import { CATALOG } from '../catalog/recipes';
+import { getActiveCatalog } from '../catalog/active';
 import { toCocktailRecipe } from '../catalog/adapter';
 import { dailyPick, searchCatalog } from '../engine/search';
 import { TASTE_LABEL } from '../engine/text';
@@ -226,7 +226,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
         )}
 
         <p className="text-center text-[10.5px] text-white/35 pb-4">
-          {CATALOG.length} recettes intégrées, disponibles hors ligne · L’abus d’alcool est dangereux pour la santé.
+          {getActiveCatalog().length} recettes intégrées, disponibles hors ligne · L’abus d’alcool est dangereux pour la santé.
         </p>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import { CATALOG } from '../catalog/recipes';
+import { getActiveCatalog } from '../catalog/active';
 import { INGREDIENTS } from '../catalog/ingredients';
 import { BaseSpirit, CatalogRecipe, Taste } from '../catalog/types';
 import { normalize, parseQuery } from './text';
@@ -72,7 +72,7 @@ function textScore(recipe: CatalogRecipe, tokens: string[], full: string): numbe
 }
 
 /** Local search & recommendation. Pure: no network, no AI. Hard filters remove, soft signals rank. */
-export function searchCatalog(criteria: SearchCriteria, ctx: SearchContext = {}, catalog: CatalogRecipe[] = CATALOG): Match[] {
+export function searchCatalog(criteria: SearchCriteria, ctx: SearchContext = {}, catalog: CatalogRecipe[] = getActiveCatalog()): Match[] {
   const parsed = parseQuery(criteria.query ?? '');
   const tastes = new Set([...(criteria.tastes ?? []), ...parsed.tastes]);
   const bases = new Set([...(criteria.bases ?? []), ...parsed.bases]);
@@ -143,7 +143,7 @@ function diversify(list: Match[]): Match[] {
   return out;
 }
 
-export function dailyPick(date = new Date(), catalog: CatalogRecipe[] = CATALOG): CatalogRecipe {
+export function dailyPick(date = new Date(), catalog: CatalogRecipe[] = getActiveCatalog()): CatalogRecipe {
   const day = Math.floor(date.getTime() / 86400000);
   return catalog[(day * 7919) % catalog.length];
 }

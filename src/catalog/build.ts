@@ -85,6 +85,7 @@ const GLASS_LABEL: Record<Glass, string> = {
   julep: 'une timbale julep',
   irish: 'un verre à irish coffee',
   pint: 'un verre à bière',
+  solo: 'un gobelet en plastique',
 };
 
 export const GLASS_NAME: Record<Glass, string> = {
@@ -104,6 +105,7 @@ export const GLASS_NAME: Record<Glass, string> = {
   julep: 'Timbale julep',
   irish: 'Verre irish coffee',
   pint: 'Pinte',
+  solo: 'Gobelet',
 };
 
 const ICE_TEXT: Record<Ice, string> = {

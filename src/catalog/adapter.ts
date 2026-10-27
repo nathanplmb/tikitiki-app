@@ -23,6 +23,7 @@ export const PROVENANCE_LABEL = {
   iba: 'Catalogue TIKITIKI · classique de la liste IBA',
   classic: 'Catalogue TIKITIKI · classique',
   tikitiki: 'Catalogue TIKITIKI · recette maison',
+  flash: 'Mode Crackhead · mix de soirée populaire',
 } as const;
 
 /** Converts a catalog recipe into the app-wide CocktailRecipe shape (favorites, detail, compare, shopping). */
