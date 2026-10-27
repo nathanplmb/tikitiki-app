@@ -1,4 +1,5 @@
-import React, { useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
+import { setFocusColor } from '../utils/theme';
 import { motion, useMotionValue, useScroll, useSpring, useTransform } from 'motion/react';
 import { ArrowRight, Sparkles, PartyPopper, Dice5, ShoppingBag, Wine } from 'lucide-react';
 import { CocktailRecipe, UserTastePreferences } from '../types/cocktail';
@@ -58,6 +59,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
 }) => {
   const hero = useMemo(() => toCocktailRecipe(dailyPick()), []);
   const art = artFor(hero);
+  useEffect(() => setFocusColor(art.color), [art.color]);
 
   // Interactive tilt + scroll parallax for the hero glass
   const ref = useRef<HTMLDivElement>(null);

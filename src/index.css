@@ -233,7 +233,8 @@ input[type="range"].slider-blue::-webkit-slider-thumb {
   --tk-ready: #3ee6a6;
   --tk-sub: #ffc857;
   --tk-miss: #ff6b6b;
-  --drink: #ff4f8b; /* overridden per screen with the selected cocktail colour */
+  --drink: #ff4f8b; /* raw colour of the drink in focus (set by utils/theme.ts) */
+  --accent: #ff4f8b; /* vivid version of --drink used by the UI */
 }
 
 body { background: var(--tk-bg); -webkit-tap-highlight-color: transparent; overscroll-behavior-y: none; }
@@ -253,7 +254,7 @@ body { background: var(--tk-bg); -webkit-tap-highlight-color: transparent; overs
 }
 .tk-glass::before {
   content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; padding: 1px;
-  background: linear-gradient(135deg, rgba(255,255,255,0.35), rgba(255,255,255,0) 30%, rgba(255,255,255,0) 70%, color-mix(in srgb, var(--drink) 55%, transparent));
+  background: linear-gradient(135deg, rgba(255,255,255,0.35), rgba(255,255,255,0) 30%, rgba(255,255,255,0) 70%, color-mix(in srgb, var(--accent) 55%, transparent));
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor; mask-composite: exclude;
 }
@@ -263,10 +264,10 @@ body { background: var(--tk-bg); -webkit-tap-highlight-color: transparent; overs
 /* Glow CTA with moving sheen */
 .tk-cta {
   position: relative; overflow: hidden; isolation: isolate;
-  background: linear-gradient(110deg, var(--tk-accent-3), var(--tk-accent) 45%, var(--tk-accent-2));
+  background: linear-gradient(110deg, color-mix(in srgb, var(--accent) 55%, #7c5cff), var(--accent) 45%, color-mix(in srgb, var(--accent) 55%, #ffb547));
   background-size: 200% 100%;
   animation: tk-flow 6s ease-in-out infinite;
-  box-shadow: 0 10px 40px -8px color-mix(in srgb, var(--tk-accent) 70%, transparent), inset 0 1px 0 rgba(255,255,255,0.4);
+  box-shadow: 0 10px 40px -8px color-mix(in srgb, var(--accent) 75%, transparent), inset 0 1px 0 rgba(255,255,255,0.4);
 }
 .tk-cta::after {
   content: ''; position: absolute; inset: -40% auto -40% -30%; width: 40%; transform: skewX(-20deg);
@@ -278,7 +279,7 @@ body { background: var(--tk-bg); -webkit-tap-highlight-color: transparent; overs
 
 /* Gradient text that takes the drink colour */
 .tk-gradient-text {
-  background: linear-gradient(100deg, #fff 10%, color-mix(in srgb, var(--drink) 80%, #fff) 55%, var(--tk-accent-2) 95%);
+  background: linear-gradient(100deg, #fff 10%, color-mix(in srgb, var(--accent) 80%, #fff) 55%, var(--tk-accent-2) 95%);
   -webkit-background-clip: text; background-clip: text; color: transparent;
 }
 
@@ -313,7 +314,7 @@ body { background: var(--tk-bg); -webkit-tap-highlight-color: transparent; overs
 .tk-scroll-x > * { scroll-snap-align: start; flex: none; }
 
 .tk-chip { border: 1px solid var(--tk-line); background: rgba(255,255,255,0.04); color: var(--tk-dim); transition: all .25s; }
-.tk-chip[data-on='true'] { color: #0b0b10; background: #fff; border-color: #fff; box-shadow: 0 0 24px -4px color-mix(in srgb, var(--drink) 80%, transparent); }
+.tk-chip[data-on='true'] { color: #0b0b10; background: #fff; border-color: #fff; box-shadow: 0 0 24px -4px color-mix(in srgb, var(--accent) 80%, transparent); }
 
 .tk-safe-bottom { padding-bottom: calc(env(safe-area-inset-bottom) + 7rem); }
 
@@ -343,7 +344,7 @@ body { background: var(--tk-bg); -webkit-tap-highlight-color: transparent; overs
     content: ''; position: absolute; inset: 1px; border-radius: inherit; pointer-events: none; z-index: -1;
     background:
       radial-gradient(120% 60% at 50% -18%, rgba(255,255,255,0.42), transparent 55%),
-      radial-gradient(60% 80% at 0% 100%, color-mix(in srgb, var(--drink) 22%, transparent), transparent 70%),
+      radial-gradient(60% 80% at 0% 100%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 70%),
       radial-gradient(60% 80% at 100% 100%, rgba(124,92,255,0.18), transparent 70%);
   }
   .tk-lens {
@@ -351,8 +352,8 @@ body { background: var(--tk-bg); -webkit-tap-highlight-color: transparent; overs
     box-shadow:
       inset 0 1px 1px rgba(255,255,255,0.9),
       inset 0 -2px 6px rgba(0,0,0,0.25),
-      inset 0 0 12px color-mix(in srgb, var(--drink) 35%, transparent),
-      0 6px 18px -6px color-mix(in srgb, var(--drink) 80%, transparent);
+      inset 0 0 12px color-mix(in srgb, var(--accent) 35%, transparent),
+      0 6px 18px -6px color-mix(in srgb, var(--accent) 80%, transparent);
     border: 0.5px solid rgba(255,255,255,0.45);
   }
 }
@@ -364,11 +365,11 @@ body { background: var(--tk-bg); -webkit-tap-highlight-color: transparent; overs
    ========================================================================= */
 html[data-mode='crackhead'] {
   --tk-bg: #050505;
-  --tk-accent: #ff2a1a;
+  --tk-accent: var(--accent);
   --tk-accent-2: #ff7a1a;
   --tk-accent-3: #ffffff;
-  --tk-line: rgba(255, 42, 26, 0.28);
-  --drink: #ff2a1a;
+  --tk-line: color-mix(in srgb, var(--accent) 28%, transparent);
+  --drink: var(--accent);
 }
 html[data-mode='crackhead'] body { background: #050505; }
 html[data-mode='crackhead'] .tk-display {
@@ -377,55 +378,55 @@ html[data-mode='crackhead'] .tk-display {
 html[data-mode='crackhead'] .tk-display.italic, html[data-mode='crackhead'] .tk-display .italic { font-style: normal; }
 /* molten red lettering with a chrome edge and glow */
 html[data-mode='crackhead'] .tk-gradient-text {
-  background: linear-gradient(180deg, #fff3d6 0%, #ffb08a 18%, #ff2a1a 46%, #9a0800 74%, #ff4a2a 100%);
+  background: linear-gradient(180deg, #fff6ea 0%, color-mix(in srgb, var(--accent) 45%, white) 18%, var(--accent) 46%, color-mix(in srgb, var(--accent) 55%, black) 74%, color-mix(in srgb, var(--accent) 80%, white) 100%);
   -webkit-background-clip: text; background-clip: text; color: transparent;
-  filter: drop-shadow(0 0 1px rgba(255,255,255,.6)) drop-shadow(0 0 14px rgba(255,42,26,.75)) drop-shadow(0 2px 0 #2a0000);
+  filter: drop-shadow(0 0 1px rgba(255,255,255,.6)) drop-shadow(0 0 14px color-mix(in srgb, var(--accent) 75%, transparent)) drop-shadow(0 2px 0 #2a0000);
 }
 /* smoked glass panels with a red rim light */
 html[data-mode='crackhead'] .tk-glass {
-  background: linear-gradient(160deg, rgba(255,255,255,0.07), rgba(255,255,255,0.015) 45%, rgba(255,42,26,0.06));
+  background: linear-gradient(160deg, rgba(255,255,255,0.07), rgba(255,255,255,0.015) 45%, color-mix(in srgb, var(--accent) 6%, transparent));
   backdrop-filter: blur(22px) saturate(140%);
   -webkit-backdrop-filter: blur(22px) saturate(140%);
   border: 1px solid rgba(255,255,255,0.08);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.14), inset 0 -1px 0 rgba(255,42,26,0.35), 0 18px 50px -20px rgba(0,0,0,.9), 0 0 32px -14px rgba(255,42,26,.55);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.14), inset 0 -1px 0 color-mix(in srgb, var(--accent) 35%, transparent), 0 18px 50px -20px rgba(0,0,0,.9), 0 0 32px -14px color-mix(in srgb, var(--accent) 55%, transparent);
 }
 html[data-mode='crackhead'] .tk-glass::before {
-  background: linear-gradient(135deg, rgba(255,255,255,0.35), transparent 30%, transparent 65%, rgba(255,42,26,0.85));
+  background: linear-gradient(135deg, rgba(255,255,255,0.35), transparent 30%, transparent 65%, color-mix(in srgb, var(--accent) 85%, transparent));
 }
 html[data-mode='crackhead'] .tk-liquid {
-  background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(20,4,4,0.35) 50%, rgba(255,42,26,0.10));
+  background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(20,4,4,0.35) 50%, color-mix(in srgb, var(--accent) 10%, transparent));
   border-color: rgba(255,255,255,0.18);
-  box-shadow: inset 0 1px 0.5px rgba(255,255,255,.65), inset 0 -10px 22px -10px rgba(255,42,26,.45), 0 0 34px -10px rgba(255,42,26,.7), 0 20px 40px -16px #000;
+  box-shadow: inset 0 1px 0.5px rgba(255,255,255,.65), inset 0 -10px 22px -10px color-mix(in srgb, var(--accent) 45%, transparent), 0 0 34px -10px color-mix(in srgb, var(--accent) 70%, transparent), 0 20px 40px -16px #000;
 }
 html[data-mode='crackhead'] .tk-lens {
-  background: radial-gradient(100% 100% at 50% 0%, rgba(255,140,110,.55), rgba(255,42,26,.35) 45%, rgba(80,0,0,.55));
+  background: radial-gradient(100% 100% at 50% 0%, color-mix(in srgb, var(--accent) 55%, white), color-mix(in srgb, var(--accent) 35%, transparent) 45%, rgba(80,0,0,.55));
   border-color: rgba(255,200,180,.6);
-  box-shadow: inset 0 1px 1px rgba(255,255,255,.85), 0 0 22px -2px rgba(255,42,26,.9);
+  box-shadow: inset 0 1px 1px rgba(255,255,255,.85), 0 0 22px -2px color-mix(in srgb, var(--accent) 90%, transparent);
 }
 html[data-mode='crackhead'] .tk-cta {
-  background: linear-gradient(180deg, #ff5a3a 0%, #e01a0c 45%, #8e0600 100%);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 70%, white) 0%, var(--accent) 45%, color-mix(in srgb, var(--accent) 50%, black) 100%);
   color: #fff !important; animation: none;
-  box-shadow: inset 0 1px 0 rgba(255,220,200,.7), inset 0 -3px 8px rgba(0,0,0,.45), 0 0 0 1px rgba(255,90,60,.6), 0 10px 40px -6px rgba(255,42,26,.9);
+  box-shadow: inset 0 1px 0 rgba(255,220,200,.7), inset 0 -3px 8px rgba(0,0,0,.45), 0 0 0 1px color-mix(in srgb, var(--accent) 60%, white), 0 10px 40px -6px color-mix(in srgb, var(--accent) 90%, transparent);
   text-shadow: 0 1px 0 rgba(0,0,0,.5);
 }
 html[data-mode='crackhead'] .tk-chip { border-color: rgba(255,255,255,.12); }
-html[data-mode='crackhead'] .tk-chip[data-on='true'] { background: #ff2a1a; border-color: #ff2a1a; color: #fff; box-shadow: 0 0 22px -4px #ff2a1a; }
+html[data-mode='crackhead'] .tk-chip[data-on='true'] { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 0 22px -4px var(--accent); }
 html[data-mode='crackhead'] .tk-aurora { opacity: .55; filter: blur(80px) saturate(120%); }
-html[data-mode='crackhead'] .tk-aurora span { background: #8e0600 !important; }
-html[data-mode='crackhead'] .tk-mono { color: rgba(255,120,100,.75); }
+html[data-mode='crackhead'] .tk-aurora span { background: color-mix(in srgb, var(--accent) 55%, black) !important; }
+html[data-mode='crackhead'] .tk-mono { color: color-mix(in srgb, var(--accent) 75%, white); }
 
 /* stage: spotlights, drifting smoke, rising embers, rare lightning */
 .tk-spot { position: absolute; top: -10%; width: 46%; height: 120%; pointer-events: none; mix-blend-mode: screen;
-  background: linear-gradient(180deg, rgba(255,60,40,.55), rgba(255,42,26,.08) 55%, transparent 80%);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 55%, white), color-mix(in srgb, var(--accent) 8%, transparent) 55%, transparent 80%);
   clip-path: polygon(45% 0, 55% 0, 100% 100%, 0 100%); filter: blur(6px); transform-origin: 50% 0; animation: tk-spot 7s ease-in-out infinite alternate; }
 @keyframes tk-spot { from { transform: rotate(var(--a)); } to { transform: rotate(calc(var(--a) * -0.6)); } }
 .tk-smoke { position: absolute; border-radius: 9999px; background: rgba(160,150,150,.16); filter: blur(40px); animation: tk-smoke 16s ease-in-out infinite alternate; pointer-events: none; }
 @keyframes tk-smoke { from { transform: translate3d(-10%, 0, 0) scale(1); } to { transform: translate3d(12%, -8%, 0) scale(1.25); } }
-.tk-ember { position: absolute; bottom: -10px; width: 3px; height: 3px; border-radius: 9999px; background: #ffb070; box-shadow: 0 0 8px 2px #ff4a1a; animation: tk-ember linear infinite; pointer-events: none; }
+.tk-ember { position: absolute; bottom: -10px; width: 3px; height: 3px; border-radius: 9999px; background: #ffb070; box-shadow: 0 0 8px 2px var(--accent); animation: tk-ember linear infinite; pointer-events: none; }
 @keyframes tk-ember { 0% { transform: translate(0, 0); opacity: 0; } 10% { opacity: 1; } 100% { transform: translate(var(--dx), -110vh); opacity: 0; } }
 .tk-lightning { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 0%, rgba(255,230,220,.35), transparent 60%); opacity: 0; animation: tk-lightning 9s infinite; pointer-events: none; }
 @keyframes tk-lightning { 0%, 94%, 100% { opacity: 0; } 95% { opacity: .9; } 96% { opacity: .1; } 97% { opacity: .6; } }
-@keyframes tk-logo-burn { 0%, 100% { filter: drop-shadow(0 0 10px rgba(255,42,26,.7)) drop-shadow(0 0 40px rgba(255,42,26,.35)); } 50% { filter: drop-shadow(0 0 18px rgba(255,60,30,.95)) drop-shadow(0 0 60px rgba(255,42,26,.55)); } }
+@keyframes tk-logo-burn { 0%, 100% { filter: drop-shadow(0 0 10px color-mix(in srgb, var(--accent) 70%, transparent)) drop-shadow(0 0 40px color-mix(in srgb, var(--accent) 35%, transparent)); } 50% { filter: drop-shadow(0 0 18px color-mix(in srgb, var(--accent) 95%, white)) drop-shadow(0 0 60px color-mix(in srgb, var(--accent) 55%, transparent)); } }
 .tk-logo-burn { animation: tk-logo-burn 3.2s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) {
   .tk-spot, .tk-smoke, .tk-ember, .tk-lightning, .tk-logo-burn { animation: none !important; }

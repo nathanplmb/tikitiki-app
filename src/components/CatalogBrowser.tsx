@@ -30,7 +30,7 @@ const Chip: React.FC<{ on: boolean; onClick: () => void; children: React.ReactNo
 );
 
 /** Catalog search: works offline, no AI. Filters change the actual results. */
-export const CatalogBrowser: React.FC<Props> = ({ barIds, barKnown, recentIds, favoriteIds, preferredTastes, initialTastes, initialCollection, onOpen }) => {
+export const CatalogBrowser: React.FC<Props> = ({ recentIds, favoriteIds, preferredTastes, initialTastes, initialCollection, onOpen }) => {
   const collections = COLLECTIONS[getStoredMode()];
   const [collectionId, setCollectionId] = useState<string | undefined>(initialCollection);
   const collection = collections.find((c) => c.id === collectionId);
@@ -39,17 +39,17 @@ export const CatalogBrowser: React.FC<Props> = ({ barIds, barKnown, recentIds, f
   const [bases, setBases] = useState<BaseSpirit[]>([]);
   const [alcohol, setAlcohol] = useState<SearchCriteria['alcohol']>('any');
   const [maxMinutes, setMaxMinutes] = useState<number | undefined>();
-  const [onlyMakeable, setOnlyMakeable] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [limit, setLimit] = useState(24);
   const q = useDeferredValue(query);
 
   const results = useMemo(
-    () => searchCatalog({ query: q, tastes, bases, alcohol, maxMinutes, onlyMakeable: barKnown && onlyMakeable },
-      { bar: barKnown ? barIds : undefined, recentIds, favoriteIds, preferredTastes }),
-    [q, tastes.join(), bases.join(), alcohol, maxMinutes, onlyMakeable, barIds, barKnown, recentIds.join()]
+    () => searchCatalog({ query: q, tastes, bases, alcohol, maxMinutes, onlyMakeable: false },
+      // The catalogue is a neutral reference: it never filters or ranks by what is in Mon bar.
+      { recentIds, favoriteIds, preferredTastes }),
+    [q, tastes.join(), bases.join(), alcohol, maxMinutes, recentIds.join()]
   ).filter((m) => !collection || collection.match(m.recipe));
-  const groups = barKnown
+  const groups = false
     ? [
         { key: 'ready', title: 'Réalisables tout de suite', items: results.filter((r) => r.availability === 'ready') },
         { key: 'substitute', title: 'Avec une substitution', items: results.filter((r) => r.availability === 'substitute') },
@@ -58,7 +58,7 @@ export const CatalogBrowser: React.FC<Props> = ({ barIds, barKnown, recentIds, f
     : [{ key: 'all', title: '', items: results }];
 
   const toggle = <T,>(arr: T[], v: T) => (arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v]);
-  const activeCount = tastes.length + bases.length + (alcohol !== 'any' ? 1 : 0) + (maxMinutes ? 1 : 0) + (onlyMakeable ? 1 : 0);
+  const activeCount = tastes.length + bases.length + (alcohol !== 'any' ? 1 : 0) + (maxMinutes ? 1 : 0);
   let shown = 0;
 
   return (
@@ -103,7 +103,6 @@ export const CatalogBrowser: React.FC<Props> = ({ barIds, barKnown, recentIds, f
         {(['any', 'with', 'without'] as const).map((a) => (
           <Chip key={a} on={alcohol === a} onClick={() => setAlcohol(a)}>{{ any: 'Tous', with: 'Avec alcool', without: 'Sans alcool' }[a]}</Chip>
         ))}
-        {barKnown && <Chip on={onlyMakeable} onClick={() => setOnlyMakeable(!onlyMakeable)}>✓ Faisable avec mon bar</Chip>}
         {TASTES.slice(0, 8).map((t) => <Chip key={t} on={tastes.includes(t)} onClick={() => setTastes(toggle(tastes, t))}>{TASTE_LABEL[t]}</Chip>)}
       </div>
 
@@ -123,7 +122,7 @@ export const CatalogBrowser: React.FC<Props> = ({ barIds, barKnown, recentIds, f
                 <div className="tk-mono text-[9.5px] text-white/45 mb-2">Temps disponible</div>
                 <div className="flex gap-1.5">{[undefined, 2, 3, 4].map((m) => <Chip key={String(m)} on={maxMinutes === m} onClick={() => setMaxMinutes(m)}>{m ? `≤ ${m} min` : 'Peu importe'}</Chip>)}</div>
               </div>
-              <button onClick={() => { setTastes([]); setBases([]); setAlcohol('any'); setMaxMinutes(undefined); setOnlyMakeable(false); }} className="text-[12px] text-white/60 underline underline-offset-4">Réinitialiser les filtres</button>
+              <button onClick={() => { setTastes([]); setBases([]); setAlcohol('any'); setMaxMinutes(undefined); }} className="text-[12px] text-white/60 underline underline-offset-4">Réinitialiser les filtres</button>
             </div>
           </motion.div>
         )}
@@ -146,7 +145,7 @@ export const CatalogBrowser: React.FC<Props> = ({ barIds, barKnown, recentIds, f
             {g.title && <h3 className="tk-display text-[26px] text-white px-1">{g.title} <span className="text-white/35 text-[18px]">{g.items.length}</span></h3>}
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {slice.map((m, i) => (
-                <RecipeCard key={m.recipe.id} size="fluid" index={i} c={toCocktailRecipe(m.recipe)} availability={barKnown ? m.availability : undefined} missing={m.missing} subs={m.substitutions} onOpen={() => onOpen(toCocktailRecipe(m.recipe))} />
+                <RecipeCard key={m.recipe.id} size="fluid" index={i} c={toCocktailRecipe(m.recipe)} onOpen={() => onOpen(toCocktailRecipe(m.recipe))} />
               ))}
             </div>
           </section>

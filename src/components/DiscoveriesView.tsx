@@ -10,6 +10,7 @@ import { CocktailArt } from './CocktailArt';
 import { CatalogBrowser } from './CatalogBrowser';
 import { RecipeCard, SectionHead } from './ui';
 import { sounds } from '../utils/audio';
+import { setFocusColor } from '../utils/theme';
 
 interface Props {
   barIds: Set<string>;
@@ -33,6 +34,7 @@ const SwipeDeck: React.FC<{ onOpen: (c: CocktailRecipe) => void; onLike: (c: Coc
   const [deck, setDeck] = useState(() => shuffle(getActiveCatalog().filter((r) => !exclude.includes(r.id))).slice(0, 30).map(toCocktailRecipe));
   const [dir, setDir] = useState(0);
   const top = deck[0];
+  React.useEffect(() => { if (top) setFocusColor(artFor(top).color); }, [top?.id]);
   const next = (liked: boolean) => {
     if (!top) return;
     setDir(liked ? 1 : -1);

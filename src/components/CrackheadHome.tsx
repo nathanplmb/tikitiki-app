@@ -1,4 +1,5 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { setFocusColor } from '../utils/theme';
 import { motion, useMotionValue, useSpring, useTransform, useAnimationControls } from 'motion/react';
 import { RefreshCw, AlertTriangle, Flame, PartyPopper, ShoppingBag } from 'lucide-react';
 import { CocktailRecipe } from '../types/cocktail';
@@ -27,11 +28,11 @@ const EMBERS = Array.from({ length: 18 }, (_, i) => ({ left: (i * 37) % 100, del
 export const MetalLogo: React.FC<{ className?: string }> = ({ className = '' }) => (
   <div className={`relative flex items-center justify-center gap-1 tk-logo-burn ${className}`} aria-label="TikiTiki version crackhead">
     <span className="tk-display tk-gradient-text text-[64px] sm:text-[84px] leading-none">TIKI</span>
-    <svg viewBox="0 0 40 80" className="h-[64px] sm:h-[84px] -mx-1 drop-shadow-[0_0_12px_#ff2a1a]" aria-hidden>
+    <svg viewBox="0 0 40 80" className="h-[64px] sm:h-[84px] -mx-1 drop-shadow-[0_0_12px_var(--accent)]" aria-hidden>
       <defs>
         <linearGradient id="bolt" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stopColor="#fff3d6" />
-          <stop offset="0.4" stopColor="#ff2a1a" />
+          <stop offset="0.4" stopColor="var(--accent)" />
           <stop offset="1" stopColor="#7a0500" />
         </linearGradient>
       </defs>
@@ -46,6 +47,7 @@ export const CrackheadHome: React.FC<Props> = ({ barIds, barKnown, recentIds, on
   const [idx, setIdx] = useState(() => Math.floor(Math.random() * pool.length));
   const flash = toCocktailRecipe(pool[idx]);
   const art = artFor(flash);
+  useEffect(() => setFocusColor(flash.pack?.bg && flash.pack.bg !== '#0d0d0d' ? flash.pack.bg : art.color, 4), [flash.id]);
   const bottle = useAnimationControls();
 
   const ref = useRef<HTMLDivElement>(null);
@@ -94,7 +96,7 @@ export const CrackheadHome: React.FC<Props> = ({ barIds, barKnown, recentIds, on
         <motion.div initial={{ opacity: 0, y: -20, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.9, ease: [0.2, 1, 0.3, 1] }}
           className="absolute inset-x-0 top-[calc(env(safe-area-inset-top)+64px)] flex flex-col items-center">
           <MetalLogo />
-          <div className="tk-display text-[22px] text-white/90 -mt-1 [text-shadow:0_0_14px_rgba(255,42,26,.8)]">version crackhead</div>
+          <div className="tk-display text-[22px] text-white/90 -mt-1 [text-shadow:0_0_14px_color-mix(in_srgb,var(--accent)_80%,transparent)]">version crackhead</div>
           <div className="tk-mono text-[9px] mt-1 tracking-[0.45em]">Pré-soirée · Épicerie de nuit · {FLASH_CATALOG.length} références</div>
         </motion.div>
 
@@ -102,15 +104,15 @@ export const CrackheadHome: React.FC<Props> = ({ barIds, barKnown, recentIds, on
         <motion.button aria-label={`Voir ${flash.name}`} onClick={() => onSelectCocktail(flash)} style={{ rotateX: rx, rotateY: ry, transformPerspective: 700 }}
           className="absolute inset-x-0 top-[25%] flex justify-center">
           <motion.div animate={bottle} className="w-[46vw] max-w-[220px] tk-float">
-            <CocktailArt {...art} glass="bottle" className="w-full drop-shadow-[0_0_40px_rgba(255,42,26,0.55)]" />
+            <CocktailArt {...art} glass="bottle" className="w-full drop-shadow-[0_0_40px_color-mix(in_srgb,var(--accent)_55%,transparent)]" />
           </motion.div>
         </motion.button>
-        <div className="absolute left-1/2 -translate-x-1/2 top-[62%] w-[64vw] max-w-[300px] h-6 rounded-[50%] bg-[radial-gradient(ellipse,rgba(255,42,26,.55),transparent_70%)] blur-md" aria-hidden />
+        <div className="absolute left-1/2 -translate-x-1/2 top-[62%] w-[64vw] max-w-[300px] h-6 rounded-[50%] bg-[radial-gradient(ellipse,color-mix(in_srgb,var(--accent)_55%,transparent),transparent_70%)] blur-md" aria-hidden />
 
         <div className="absolute inset-x-0 bottom-0 px-5 pb-8 pt-16 bg-gradient-to-t from-[#050505] via-[#050505]/90 to-transparent">
-          <div className="flex items-center gap-2 tk-mono text-[10px]"><Flame className="w-3.5 h-3.5 text-[#ff2a1a]" /> Flash du soir</div>
+          <div className="flex items-center gap-2 tk-mono text-[10px]"><Flame className="w-3.5 h-3.5 text-[var(--accent)]" /> Flash du soir</div>
           <motion.h1 key={flash.id} initial={{ opacity: 0, y: 14, filter: 'blur(6px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-            className="tk-display text-[42px] sm:text-[56px] text-white mt-1 [text-shadow:0_0_18px_rgba(255,42,26,.65)]">
+            className="tk-display text-[42px] sm:text-[56px] text-white mt-1 [text-shadow:0_0_18px_color-mix(in_srgb,var(--accent)_65%,transparent)]">
             {flash.name}
           </motion.h1>
           <p className="text-[13px] text-white/70 mt-1.5 max-w-[36ch]">{flash.description}</p>
@@ -133,7 +135,7 @@ export const CrackheadHome: React.FC<Props> = ({ barIds, barKnown, recentIds, on
             { l: 'Courses', i: ShoppingBag, f: onOpenShopping },
           ].map((a) => (
             <motion.button key={a.l} whileTap={{ scale: 0.92 }} onClick={() => { sounds.playTap(); a.f(); }} className="tk-glass rounded-2xl p-3.5 text-left">
-              <a.i className="w-5 h-5 mb-3 text-[#ff2a1a] drop-shadow-[0_0_8px_#ff2a1a]" />
+              <a.i className="w-5 h-5 mb-3 text-[var(--accent)] drop-shadow-[0_0_8px_var(--accent)]" />
               <div className="text-[12.5px] font-extrabold uppercase tracking-wide text-white">{a.l}</div>
             </motion.button>
           ))}
@@ -176,7 +178,7 @@ export const CrackheadHome: React.FC<Props> = ({ barIds, barKnown, recentIds, on
         )}
 
         <section className="tk-glass rounded-2xl p-4 flex gap-3">
-          <AlertTriangle className="w-6 h-6 text-[#ff2a1a] shrink-0" />
+          <AlertTriangle className="w-6 h-6 text-[var(--accent)] shrink-0" />
           <p className="text-[12.5px] text-white/80 leading-relaxed">
             Bières fortes et boissons énergisantes trompent : la caféine masque l’ivresse et une canette de bière forte compte comme plusieurs verres.
             Alterne avec de l’eau, mange avant, désigne ton SAM. L’abus d’alcool est dangereux pour la santé.

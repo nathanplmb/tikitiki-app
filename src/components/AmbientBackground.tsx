@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { setFocusColor } from '../utils/theme';
 
 export type AmbientTheme =
   | 'dark-berry'
@@ -33,8 +34,9 @@ export const AmbientBackground: React.FC<AmbientBackgroundProps> = ({ theme = 'n
   const main = color ?? c1;
 
   useEffect(() => {
-    document.documentElement.style.setProperty('--drink', main);
-  }, [main]);
+    // Only an explicitly focused drink retints the UI; screens set their own focus otherwise.
+    if (color) setFocusColor(color);
+  }, [color]);
 
   return (
     <div aria-hidden="true">
