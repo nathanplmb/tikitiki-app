@@ -16,6 +16,7 @@ import { PartyPlannerView } from './components/PartyPlannerView';
 import { NeonLiquidShaker, GenStage } from './components/NeonLiquidShaker';
 import { Onboarding } from './components/Onboarding';
 import { CrackheadHome } from './components/CrackheadHome';
+import { CrackheadLab } from './components/CrackheadLab';
 import { StormCanvas } from './components/StormCanvas';
 import { AppMode, getStoredMode, setActiveMode } from './catalog/active';
 import { CocktailRecipe, CreationConfig, UserBarItem, ShoppingItem, UserTastePreferences, PartyPlan } from './types/cocktail';
@@ -301,14 +302,14 @@ export default function App() {
             {activeTab === 'lab' && (
               <div className="tk-safe-bottom space-y-5 pt-2">
                 <header>
-                  <div className="tk-mono text-[10px] text-white/50">{labMode === 'bar' ? 'Ton inventaire, tes possibilités' : 'Création sur mesure'}</div>
+                  <div className="tk-mono text-[10px] text-white/50">{labMode === 'bar' ? 'Ton inventaire, tes possibilités' : mode === 'crackhead' ? 'Générateur de flash' : 'Création sur mesure'}</div>
                   <h1 className="tk-display text-[56px] text-white mt-1">Le <span className="italic tk-gradient-text">labo</span></h1>
                 </header>
                 <div className="grid grid-cols-2 gap-1 p-1 rounded-full tk-glass">
                   {(['ai', 'bar'] as const).map((m) => (
                     <button key={m} onClick={() => setLabMode(m)} className="relative h-11 rounded-full text-[13px] font-bold">
                       {labMode === m && <motion.span layoutId="lab-seg" className="absolute inset-0 rounded-full bg-white" transition={{ type: 'spring', stiffness: 500, damping: 34 }} />}
-                      <span className={`relative ${labMode === m ? 'text-[#0b0b10]' : 'text-white/60'}`}>{m === 'ai' ? 'Créer avec l’IA ✦' : 'Mon bar'}</span>
+                      <span className={`relative ${labMode === m ? 'text-[#0b0b10]' : 'text-white/60'}`}>{m === 'ai' ? (mode === 'crackhead' ? 'Créer un flash ⚡' : 'Créer avec l’IA ✦') : 'Mon bar'}</span>
                     </button>
                   ))}
                 </div>
@@ -326,7 +327,7 @@ export default function App() {
                   />
                 ) : (
                   <>
-                    {aiStatus && !aiStatus.configured && (
+                    {aiStatus && !aiStatus.configured && mode === 'chic' && (
                       <div className="tk-glass rounded-[20px] px-4 py-3 flex items-start gap-3 text-[12.5px] text-white/70">
                         <CloudOff className="w-4 h-4 mt-0.5 shrink-0" />
                         <span>Les fonctions IA sont indisponibles sur ce serveur (clé non configurée). Le catalogue fonctionne normalement.</span>
@@ -351,6 +352,8 @@ export default function App() {
                         onOpenCompare={(a, b) => setCompareCocktails([a, b])}
                         onRestartLab={() => setCurrentRecipes([])}
                       />
+                    ) : mode === 'crackhead' ? (
+                      <CrackheadLab onOpen={openCocktail} onGenerate={handleGenerate} isGenerating={genStage !== 'idle'} aiAvailable={Boolean(aiStatus?.configured)} />
                     ) : (
                       <LabConfigurator onGenerate={handleGenerate} isGenerating={genStage !== 'idle'} userBar={userBar} initialConfig={labConfig} onBack={() => go('home')} />
                     )}

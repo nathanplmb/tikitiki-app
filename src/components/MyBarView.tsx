@@ -7,6 +7,7 @@ import { IngredientCategory } from '../catalog/types';
 import { searchCatalog } from '../engine/search';
 import { matchIngredientId, normalize } from '../engine/text';
 import { toCocktailRecipe } from '../catalog/adapter';
+import { getActiveCatalog } from '../catalog/active';
 import { RecipeCard, SectionHead } from './ui';
 import { sounds } from '../utils/audio';
 
@@ -42,7 +43,15 @@ export const MyBarView: React.FC<MyBarViewProps> = ({ userBar, barIds, onToggleS
   }, [almost]);
 
   const byName = new Map(userBar.map((b) => [b.ingredientId ?? matchIngredientId(b.name), b]));
-  const suggestions = INGREDIENT_LIST.filter((i) => active.cats.includes(i.category) && !i.staple && (!q || normalize(i.name + ' ' + i.synonyms.join(' ')).includes(normalize(q))));
+  const usage = useMemo(() => {
+    const m = new Map<string, number>();
+    for (const r of getActiveCatalog()) for (const i of r.ingredients) m.set(i.id, (m.get(i.id) ?? 0) + 1);
+    return m;
+  }, []);
+  const suggestions = INGREDIENT_LIST
+    .filter((i) => active.cats.includes(i.category) && !i.staple)
+    .filter((i) => (q ? normalize(i.name + ' ' + i.synonyms.join(' ')).includes(normalize(q)) : (usage.get(i.id) ?? 0) > 0 || byName.get(i.id)?.inStock))
+    .sort((a, b) => (usage.get(b.id) ?? 0) - (usage.get(a.id) ?? 0));
   const custom = userBar.filter((b) => b.category === shelf && !(b.ingredientId ?? matchIngredientId(b.name)));
 
   const toggle = (ingId: string) => {
