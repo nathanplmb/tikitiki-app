@@ -16,7 +16,7 @@ import { PartyPlannerView } from './components/PartyPlannerView';
 import { NeonLiquidShaker, GenStage } from './components/NeonLiquidShaker';
 import { Onboarding } from './components/Onboarding';
 import { CrackheadHome } from './components/CrackheadHome';
-import { LightningCanvas } from './components/LightningCanvas';
+import { StormCanvas } from './components/StormCanvas';
 import { AppMode, getStoredMode, setActiveMode } from './catalog/active';
 import { CocktailRecipe, CreationConfig, UserBarItem, ShoppingItem, UserTastePreferences, PartyPlan } from './types/cocktail';
 import {
@@ -229,7 +229,7 @@ export default function App() {
     <div className="relative min-h-screen text-slate-100 flex flex-col font-sans">
       <AmbientBackground theme={ambientTheme} color={ambientColor} />
       {/* crackhead: storm behind every screen, seen through the glass panels while scrolling */}
-      {mode === 'crackhead' && <LightningCanvas fixed className="z-[1]" minGap={3000} maxGap={4500} />}
+      {mode === 'crackhead' && <StormCanvas variant="ambient" fixed className="z-[1]" />}
       <NeonLiquidShaker stage={genStage} color={ambientColor} onCancel={() => abortRef.current?.abort()} />
 
       <Navigation activeTab={activeTab} setActiveTab={go} shoppingCount={shoppingCount} onOpenShopping={() => setIsShoppingOpen(true)} favoritesCount={favorites.length} />

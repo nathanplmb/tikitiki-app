@@ -10,7 +10,7 @@ import { toCocktailRecipe, artFor } from '../catalog/adapter';
 import { COLLECTIONS } from '../catalog/collections';
 import { searchCatalog } from '../engine/search';
 import { CocktailArt } from './CocktailArt';
-import { LightningCanvas } from './LightningCanvas';
+import { StormCanvas } from './StormCanvas';
 import { RecipeCard } from './ui';
 import { sounds } from '../utils/audio';
 
@@ -90,9 +90,9 @@ export const CrackheadHome: React.FC<Props> = ({ barIds, barKnown, recentIds, on
         className="relative h-[90svh] min-h-[640px] max-h-[880px] overflow-hidden bg-[#050505]"
         style={{ ['--drink' as string]: art.color }}
       >
-        {/* stage: procedural lightning tinted by the drink, smoke, embers */}
+        {/* stage: storm clouds, rain, lightning, sparks and plasma tinted by the drink, plus smoke and embers */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_10%,color-mix(in_srgb,var(--accent)_32%,#120404)_0%,#0a0606_45%,#040404_85%)] transition-[background] duration-1000" />
-        <LightningCanvas />
+        <StormCanvas variant="hero" />
         <div className="tk-smoke w-[90%] h-[30%] left-[-20%] top-[50%]" aria-hidden />
         <div className="tk-smoke w-[80%] h-[26%] right-[-25%] top-[60%]" style={{ animationDelay: '-7s' }} aria-hidden />
         {EMBERS.map((e, i) => (
