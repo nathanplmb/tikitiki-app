@@ -21,7 +21,7 @@ import {
   FLAVOR_PROFILES 
 } from '../data/ingredients';
 import { sounds } from '../utils/audio';
-import { Cocktail3DViewer } from './Cocktail3DViewer';
+import { Cocktail3DViewer } from './Lazy3D';
 
 interface LabConfiguratorProps {
   onGenerate: (config: CreationConfig) => void;

@@ -22,7 +22,7 @@ import {
 } from 'lucide-react';
 import { CocktailRecipe } from '../types/cocktail';
 import { sounds } from '../utils/audio';
-import { Cocktail3DViewer } from './Cocktail3DViewer';
+import { Cocktail3DViewer } from './Lazy3D';
 import { DrinkVisual, SourceBadge } from './ui';
 import { artFor } from '../catalog/adapter';
 import { TASTE_LABEL } from '../engine/text';

@@ -86,10 +86,14 @@ export const StormCanvas: React.FC<{ variant?: 'hero' | 'ambient'; fixed?: boole
     if (!ctx) return;
     const hero = variant === 'hero';
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // phones: 1x pixels, 30 fps, fewer clouds/particles, paused when hidden or off screen
+    const mobile = window.matchMedia('(max-width: 1024px), (pointer: coarse)').matches;
+    let visible = true;
+    let lastFrame = 0;
     let w = 0, h = 0, raf = 0, alive = true;
 
     const resize = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const dpr = mobile ? 1 : Math.min(window.devicePixelRatio || 1, 1.5);
       w = canvas.clientWidth;
       h = canvas.clientHeight;
       canvas.width = w * dpr;
@@ -99,9 +103,11 @@ export const StormCanvas: React.FC<{ variant?: 'hero' | 'ambient'; fixed?: boole
     resize();
     const ro = new ResizeObserver(resize);
     ro.observe(canvas);
+    const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting; });
+    io.observe(canvas);
 
     // clouds: dense band at the top for the hero, a thinner veil for the ambient layer
-    const puffs: Puff[] = Array.from({ length: hero ? 26 : 14 }, () => ({
+    const puffs: Puff[] = Array.from({ length: (hero ? 26 : 14) / (mobile ? 2 : 1) }, () => ({
       x: Math.random() * 1.2 - 0.1,
       y: hero ? Math.random() * 0.32 : Math.random() * 0.9,
       r: (hero ? 70 : 90) + Math.random() * 110,
@@ -109,7 +115,7 @@ export const StormCanvas: React.FC<{ variant?: 'hero' | 'ambient'; fixed?: boole
       shade: 0.25 + Math.random() * 0.35,
     }));
     // charged particles: slow upward drift with a wobble, twinkle, flare on every strike
-  const ions = Array.from({ length: hero ? 70 : 40 }, () => ({ x: Math.random(), y: Math.random(), r: 0.6 + Math.random() * 1.6, v: 0.01 + Math.random() * 0.03, ph: Math.random() * Math.PI * 2 }));
+  const ions = Array.from({ length: (hero ? 70 : 40) / (mobile ? 2 : 1) }, () => ({ x: Math.random(), y: Math.random(), r: 0.6 + Math.random() * 1.6, v: 0.01 + Math.random() * 0.03, ph: Math.random() * Math.PI * 2 }));
     let bolts: Bolt[] = [];
     let sparks: Spark[] = [];
     let arcs: Arc[] = [];
@@ -119,6 +125,11 @@ export const StormCanvas: React.FC<{ variant?: 'hero' | 'ambient'; fixed?: boole
 
     const draw = (now: number) => {
       if (!alive) return;
+      if (!visible || document.hidden || (mobile && now - lastFrame < 33)) {
+        raf = requestAnimationFrame(draw);
+        return;
+      }
+      lastFrame = now;
       const dt = Math.min(0.05, (now - last) / 1000);
       last = now;
       const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#ff2a1a';
@@ -193,7 +204,7 @@ export const StormCanvas: React.FC<{ variant?: 'hero' | 'ambient'; fixed?: boole
         ctx.globalAlpha = glow;
         ctx.fillStyle = flash > 0.3 ? '#ffffff' : accent;
         ctx.shadowColor = accent;
-        ctx.shadowBlur = 6 + flash * 14;
+        ctx.shadowBlur = mobile ? 0 : 6 + flash * 14;
         ctx.beginPath();
         ctx.arc(x, y, p.r * (1 + flash * 0.8), 0, Math.PI * 2);
         ctx.fill();
@@ -236,7 +247,7 @@ export const StormCanvas: React.FC<{ variant?: 'hero' | 'ambient'; fixed?: boole
         ctx.globalAlpha = a;
         ctx.strokeStyle = Math.random() < 0.5 ? '#fff' : accent;
         ctx.shadowColor = accent;
-        ctx.shadowBlur = 8;
+        ctx.shadowBlur = mobile ? 0 : 8;
         ctx.lineWidth = 1.6;
         ctx.beginPath();
         ctx.moveTo(s.x, s.y);
@@ -254,6 +265,7 @@ export const StormCanvas: React.FC<{ variant?: 'hero' | 'ambient'; fixed?: boole
       alive = false;
       cancelAnimationFrame(raf);
       ro.disconnect();
+      io.disconnect();
     };
   }, [variant]);
 

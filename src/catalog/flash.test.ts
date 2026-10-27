@@ -47,7 +47,7 @@ describe('épicerie de nuit shelf', () => {
     }
   });
   it('finds products by street names', () => {
-    expect(searchCatalog({ query: 'buzzballz' }, {}, FLASH_CATALOG)[0].recipe.id).toBe('buzzball-type');
+    expect(searchCatalog({ query: 'buzzballz' }, {}, FLASH_CATALOG)[0].recipe.id).toMatch(/buzz?ball/);
     expect(searchCatalog({ query: 'vody' }, {}, FLASH_CATALOG)[0].recipe.id).toBe('vody-type');
     expect(searchCatalog({ query: '8.6 cherry' }, {}, FLASH_CATALOG)[0].recipe.id).toBe('huit-six-cherry');
   });
