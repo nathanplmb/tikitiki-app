@@ -5,11 +5,12 @@ import { RefreshCw, AlertTriangle, Flame, PartyPopper, ShoppingBag } from 'lucid
 import { CocktailRecipe } from '../types/cocktail';
 import { FLASH_CATALOG, HIGH_RISK_IDS } from '../catalog/flash';
 
-const ROTATE_MS = 15000;
+const ROTATE_MS = 7000;
 import { toCocktailRecipe, artFor } from '../catalog/adapter';
 import { COLLECTIONS } from '../catalog/collections';
 import { searchCatalog } from '../engine/search';
 import { CocktailArt } from './CocktailArt';
+import { LightningCanvas } from './LightningCanvas';
 import { RecipeCard } from './ui';
 import { sounds } from '../utils/audio';
 
@@ -89,16 +90,14 @@ export const CrackheadHome: React.FC<Props> = ({ barIds, barKnown, recentIds, on
         className="relative h-[90svh] min-h-[640px] max-h-[880px] overflow-hidden bg-[#050505]"
         style={{ ['--drink' as string]: art.color }}
       >
-        {/* stage: spotlights tinted by the drink, smoke, embers, rare lightning */}
+        {/* stage: procedural lightning tinted by the drink, smoke, embers */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_10%,color-mix(in_srgb,var(--accent)_32%,#120404)_0%,#0a0606_45%,#040404_85%)] transition-[background] duration-1000" />
-        <div className="tk-spot left-[-8%]" style={{ ['--a' as string]: '-18deg' }} aria-hidden />
-        <div className="tk-spot right-[-8%]" style={{ ['--a' as string]: '18deg', animationDelay: '-3s' }} aria-hidden />
+        <LightningCanvas />
         <div className="tk-smoke w-[90%] h-[30%] left-[-20%] top-[50%]" aria-hidden />
         <div className="tk-smoke w-[80%] h-[26%] right-[-25%] top-[60%]" style={{ animationDelay: '-7s' }} aria-hidden />
         {EMBERS.map((e, i) => (
           <span key={i} className="tk-ember" aria-hidden style={{ left: `${e.left}%`, animationDelay: `${e.delay}s`, animationDuration: `${e.dur}s`, ['--dx' as string]: e.dx }} />
         ))}
-        <div className="tk-lightning" aria-hidden />
 
         {/* neon sign */}
         <motion.div initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.9, ease: [0.2, 1, 0.3, 1] }}
@@ -107,7 +106,7 @@ export const CrackheadHome: React.FC<Props> = ({ barIds, barKnown, recentIds, on
           <div className="tk-display text-[21px] text-white/90 -mt-1 [text-shadow:0_0_14px_color-mix(in_srgb,var(--accent)_80%,transparent)]">version crackhead</div>
         </motion.div>
 
-        {/* the featured drink: tilts with the finger, swaps every 15 s with a spin */}
+        {/* the featured drink: tilts with the finger, swaps every 7 s with a spin */}
         <motion.div style={{ rotateX: rx, rotateY: ry, transformPerspective: 700 }} className="absolute inset-x-0 top-[26%] h-[40%] flex justify-center items-center">
           <AnimatePresence mode="popLayout" initial={false}>
             <motion.button
@@ -125,7 +124,7 @@ export const CrackheadHome: React.FC<Props> = ({ barIds, barKnown, recentIds, on
           </AnimatePresence>
         </motion.div>
         <div className="absolute left-1/2 -translate-x-1/2 top-[64%] w-[60vw] max-w-[280px] h-6 rounded-[50%] bg-[radial-gradient(ellipse,color-mix(in_srgb,var(--accent)_55%,transparent),transparent_70%)] blur-md" aria-hidden />
-        {/* 15 s timer bar (real timer of the rotation) */}
+        {/* 7 s timer bar (real timer of the rotation) */}
         <div className="absolute left-1/2 -translate-x-1/2 top-[68%] w-24 h-[3px] rounded-full bg-white/10 overflow-hidden" aria-hidden>
           <motion.div key={`${flash.id}-${cycle}`} initial={{ width: '0%' }} animate={{ width: '100%' }} transition={{ duration: ROTATE_MS / 1000, ease: 'linear' }} className="h-full bg-[var(--accent)] shadow-[0_0_8px_var(--accent)]" />
         </div>
