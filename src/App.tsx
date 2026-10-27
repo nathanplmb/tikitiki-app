@@ -56,7 +56,7 @@ export default function App() {
   const [tastePrefs, setTastePrefs] = useState<UserTastePreferences>(getTastePreferences);
   const [recentIds, setRecentIds] = useState<string[]>(getRecentIds);
   const [signals, setSignals] = useState(getTasteSignals);
-  const [showOnboarding, setShowOnboarding] = useState(() => !isOnboarded());
+  const [showOnboarding, setShowOnboarding] = useState(false) // welcome tour disabled;
   const [muted, setMuted] = useState(sounds.getMuted());
 
   const [labMode, setLabMode] = useState<'ai' | 'bar'>('ai');
