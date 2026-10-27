@@ -15,16 +15,27 @@ function jag(a: Pt, b: Pt, depth: number, spread: number): Pt[] {
   return [...left.slice(0, -1), ...jag(mid, b, depth - 1, spread / 2)];
 }
 
+/** A bolt can start from any edge and travel in any direction across the screen. */
 function makeBolt(w: number, h: number): Bolt {
-  const start = { x: w * (0.15 + Math.random() * 0.7), y: -10 };
-  const end = { x: start.x + (Math.random() - 0.5) * w * 0.5, y: h * (0.45 + Math.random() * 0.3) };
-  const main = jag(start, end, 7, w * 0.35);
+  const edge = Math.floor(Math.random() * 4);
+  const r = Math.random;
+  const start =
+    edge === 0 ? { x: w * r(), y: -10 } : edge === 1 ? { x: w + 10, y: h * r() } : edge === 2 ? { x: w * r(), y: h + 10 } : { x: -10, y: h * r() };
+  // aim at a random point, biased towards the opposite half so bolts cross the screen
+  const end = {
+    x: edge === 1 ? w * r() * 0.6 : edge === 3 ? w * (0.4 + r() * 0.6) : w * r(),
+    y: edge === 0 ? h * (0.35 + r() * 0.6) : edge === 2 ? h * r() * 0.65 : h * r(),
+  };
+  const len = Math.hypot(end.x - start.x, end.y - start.y);
+  const main = jag(start, end, 7, Math.max(80, len * 0.35));
   const branches: Pt[][] = [];
   for (let i = 8; i < main.length - 10; i += 6 + Math.floor(Math.random() * 10)) {
     if (Math.random() < 0.55) {
       const from = main[i];
       const dir = Math.random() < 0.5 ? -1 : 1;
-      const to = { x: from.x + dir * (30 + Math.random() * w * 0.25), y: from.y + 30 + Math.random() * h * 0.18 };
+      const ang = Math.atan2(end.y - start.y, end.x - start.x) + dir * (0.4 + Math.random() * 0.8);
+      const bl = 40 + Math.random() * len * 0.35;
+      const to = { x: from.x + Math.cos(ang) * bl, y: from.y + Math.sin(ang) * bl };
       branches.push(jag(from, to, 5, 60));
     }
   }
@@ -48,7 +59,7 @@ function stroke(ctx: CanvasRenderingContext2D, pts: Pt[], upto: number, width: n
   ctx.restore();
 }
 
-export const LightningCanvas: React.FC<{ className?: string }> = ({ className = '' }) => {
+export const LightningCanvas: React.FC<{ className?: string; minGap?: number; maxGap?: number; fixed?: boolean }> = ({ className = '', minGap = 2800, maxGap = 4000, fixed = false }) => {
   const ref = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -82,6 +93,7 @@ export const LightningCanvas: React.FC<{ className?: string }> = ({ className = 
       const frame = (now: number) => {
         const t = now - t0;
         ctx.clearRect(0, 0, w, h);
+        if (!w || !h) return;
         let intensity = 0;
         let grow = 1;
         if (t < 140) { grow = t / 140; intensity = 0.25; }
@@ -92,7 +104,8 @@ export const LightningCanvas: React.FC<{ className?: string }> = ({ className = 
         }
         if (intensity > 0.6) {
           // sky / wall illumination
-          const g = ctx.createRadialGradient(bolt.main[0].x, 0, 0, bolt.main[0].x, 0, h * 0.9);
+          const c = bolt.main[Math.floor(bolt.main.length / 2)];
+          const g = ctx.createRadialGradient(c.x, c.y, 0, c.x, c.y, Math.max(w, h) * 0.8);
           g.addColorStop(0, `rgba(255,255,255,${0.22 * intensity})`);
           g.addColorStop(1, 'rgba(0,0,0,0)');
           ctx.fillStyle = g;
@@ -109,20 +122,20 @@ export const LightningCanvas: React.FC<{ className?: string }> = ({ className = 
         if (t < 950) raf = requestAnimationFrame(frame);
         else {
           ctx.clearRect(0, 0, w, h);
-          timer = window.setTimeout(strike, 2500 + Math.random() * 4500);
+          timer = window.setTimeout(strike, minGap + Math.random() * (maxGap - minGap));
         }
       };
       raf = requestAnimationFrame(frame);
     };
 
-    timer = window.setTimeout(strike, 900);
+    timer = window.setTimeout(strike, 600 + Math.random() * 1200);
     return () => {
       alive = false;
       cancelAnimationFrame(raf);
       clearTimeout(timer);
       ro.disconnect();
     };
-  }, []);
+  }, [minGap, maxGap]);
 
-  return <canvas ref={ref} className={`absolute inset-0 w-full h-full pointer-events-none ${className}`} aria-hidden />;
+  return <canvas ref={ref} className={`${fixed ? 'fixed' : 'absolute'} inset-0 w-full h-full pointer-events-none ${className}`} aria-hidden />;
 };

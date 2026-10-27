@@ -5,7 +5,7 @@ import { RefreshCw, AlertTriangle, Flame, PartyPopper, ShoppingBag } from 'lucid
 import { CocktailRecipe } from '../types/cocktail';
 import { FLASH_CATALOG, HIGH_RISK_IDS } from '../catalog/flash';
 
-const ROTATE_MS = 7000;
+const ROTATE_MS = 10000;
 import { toCocktailRecipe, artFor } from '../catalog/adapter';
 import { COLLECTIONS } from '../catalog/collections';
 import { searchCatalog } from '../engine/search';
@@ -106,7 +106,7 @@ export const CrackheadHome: React.FC<Props> = ({ barIds, barKnown, recentIds, on
           <div className="tk-display text-[21px] text-white/90 -mt-1 [text-shadow:0_0_14px_color-mix(in_srgb,var(--accent)_80%,transparent)]">version crackhead</div>
         </motion.div>
 
-        {/* the featured drink: tilts with the finger, swaps every 7 s with a spin */}
+        {/* the featured drink: tilts with the finger, swaps every 10 s with a spin */}
         <motion.div style={{ rotateX: rx, rotateY: ry, transformPerspective: 700 }} className="absolute inset-x-0 top-[26%] h-[40%] flex justify-center items-center">
           <AnimatePresence mode="popLayout" initial={false}>
             <motion.button
@@ -124,7 +124,7 @@ export const CrackheadHome: React.FC<Props> = ({ barIds, barKnown, recentIds, on
           </AnimatePresence>
         </motion.div>
         <div className="absolute left-1/2 -translate-x-1/2 top-[64%] w-[60vw] max-w-[280px] h-6 rounded-[50%] bg-[radial-gradient(ellipse,color-mix(in_srgb,var(--accent)_55%,transparent),transparent_70%)] blur-md" aria-hidden />
-        {/* 7 s timer bar (real timer of the rotation) */}
+        {/* 10 s timer bar (real timer of the rotation) */}
         <div className="absolute left-1/2 -translate-x-1/2 top-[68%] w-24 h-[3px] rounded-full bg-white/10 overflow-hidden" aria-hidden>
           <motion.div key={`${flash.id}-${cycle}`} initial={{ width: '0%' }} animate={{ width: '100%' }} transition={{ duration: ROTATE_MS / 1000, ease: 'linear' }} className="h-full bg-[var(--accent)] shadow-[0_0_8px_var(--accent)]" />
         </div>
