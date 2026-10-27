@@ -1,0 +1,7 @@
+{
+  "name": "TikiTiki — AI Cocktail Lab",
+  "description": "TikiTiki — Laboratoire personnel de création de cocktails assisté par IA. Mix your taste. Discover your signature.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+

@@ -1,0 +1,358 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: #08090D;
+    color: #F5F5F7;
+  }
+  h1, h2, h3, h4, .font-display {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    letter-spacing: -0.02em;
+  }
+  .font-serif, .editorial-serif {
+    font-family: 'Instrument Serif', Georgia, serif;
+    letter-spacing: -0.015em;
+    font-weight: 400;
+  }
+}
+
+/* =========================================================================
+   GENUINE STUDIO GLASSMORPHISM SYSTEM (APPLE-INSPIRED LAYERED MATERIALS)
+   ========================================================================= */
+
+/* Primary frosted surface for cards & content containers */
+.glass-panel {
+  background: rgba(18, 20, 28, 0.45);
+  backdrop-filter: blur(32px) saturate(180%);
+  -webkit-backdrop-filter: blur(32px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.12),
+    inset 0 -1px 0 0 rgba(0, 0, 0, 0.2),
+    0 20px 40px -15px rgba(0, 0, 0, 0.6);
+}
+
+/* Secondary softer surface for nested groupings or chips */
+.glass-panel-subtle {
+  background: rgba(255, 255, 255, 0.035);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
+}
+
+/* Interactive touch surface with organic specular sheen on hover/focus */
+.glass-panel-interactive {
+  background: rgba(20, 23, 33, 0.5);
+  backdrop-filter: blur(28px) saturate(170%);
+  -webkit-backdrop-filter: blur(28px) saturate(170%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.1),
+    0 12px 30px -8px rgba(0, 0, 0, 0.45);
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-panel-interactive:hover {
+  background: rgba(28, 32, 46, 0.65);
+  border-color: rgba(255, 255, 255, 0.18);
+  transform: translateY(-2px);
+  box-shadow: 
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.2),
+    0 24px 50px -10px rgba(0, 0, 0, 0.65);
+}
+
+/* Floating navigation & modal bottom sheets */
+.glass-panel-overlay {
+  background: rgba(12, 14, 20, 0.82);
+  backdrop-filter: blur(40px) saturate(200%);
+  -webkit-backdrop-filter: blur(40px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.16),
+    0 30px 70px -15px rgba(0, 0, 0, 0.85);
+}
+
+/* Compact frosted pill controls */
+.glass-pill {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  transition: all 0.2s ease;
+}
+
+.glass-pill:hover {
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.glass-pill-active {
+  background: rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  color: #FFFFFF;
+  box-shadow: 
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.3),
+    0 4px 15px -3px rgba(0, 0, 0, 0.4);
+}
+
+/* Soft specular top border highlight (Glass Bevel) */
+.glass-bevel {
+  position: relative;
+}
+.glass-bevel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+  pointer-events: none;
+}
+
+/* Studio light caustics and highlights */
+.studio-light-reflection {
+  background: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.12) 0%, transparent 70%);
+}
+
+/* Clean minimal scrollbars */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+/* =========================================================================
+   MOCKUP SIGNATURE BUTTON & SLIDERS SYSTEM
+   ========================================================================= */
+
+.btn-mockup-gradient {
+  background: linear-gradient(90deg, #8B246A 0%, #B83280 48%, #E55D44 100%);
+  box-shadow: 0 8px 28px -4px rgba(184, 50, 128, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-mockup-gradient:hover {
+  opacity: 0.95;
+  transform: translateY(-1px);
+  box-shadow: 0 12px 34px -4px rgba(229, 93, 68, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+.btn-mockup-gradient:active {
+  transform: scale(0.98);
+}
+
+/* Custom mockups range sliders */
+input[type="range"].slider-pink {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, #3B122D 0%, #B83280 50%, #EC4899 100%);
+  outline: none;
+}
+input[type="range"].slider-pink::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #F472B6;
+  border: 2px solid #FFFFFF;
+  box-shadow: 0 0 12px rgba(236, 72, 153, 0.8);
+  cursor: pointer;
+}
+
+input[type="range"].slider-green {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, #06281E 0%, #10B981 50%, #84CC16 100%);
+  outline: none;
+}
+input[type="range"].slider-green::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #A3E635;
+  border: 2px solid #FFFFFF;
+  box-shadow: 0 0 12px rgba(163, 230, 53, 0.8);
+  cursor: pointer;
+}
+
+input[type="range"].slider-blue {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, #0C2038 0%, #3B82F6 50%, #38BDF8 100%);
+  outline: none;
+}
+input[type="range"].slider-blue::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #60A5FA;
+  border: 2px solid #FFFFFF;
+  box-shadow: 0 0 12px rgba(96, 165, 250, 0.8);
+  cursor: pointer;
+}
+
+/* =========================================================================
+   TIKITIKI v3 — LIQUID NOIR DESIGN SYSTEM
+   ========================================================================= */
+:root {
+  --tk-bg: #06060a;
+  --tk-ink: #f6f3ee;
+  --tk-dim: rgba(246, 243, 238, 0.62);
+  --tk-faint: rgba(246, 243, 238, 0.38);
+  --tk-line: rgba(255, 255, 255, 0.09);
+  --tk-glass: rgba(255, 255, 255, 0.055);
+  --tk-glass-strong: rgba(22, 20, 30, 0.62);
+  --tk-accent: #ff4f8b;
+  --tk-accent-2: #ffb547;
+  --tk-accent-3: #7c5cff;
+  --tk-ready: #3ee6a6;
+  --tk-sub: #ffc857;
+  --tk-miss: #ff6b6b;
+  --drink: #ff4f8b; /* overridden per screen with the selected cocktail colour */
+}
+
+body { background: var(--tk-bg); -webkit-tap-highlight-color: transparent; overscroll-behavior-y: none; }
+
+.tk-display { font-family: 'Instrument Serif', Georgia, serif; font-weight: 400; letter-spacing: -0.02em; line-height: 0.92; }
+.tk-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; letter-spacing: 0.14em; text-transform: uppercase; }
+
+/* Liquid glass: blur + inner highlight + rim light (in a layer so utilities like `absolute` still win) */
+@layer components {
+.tk-glass {
+  position: relative;
+  background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.035) 38%, rgba(255,255,255,0.02) 100%);
+  backdrop-filter: blur(24px) saturate(170%);
+  -webkit-backdrop-filter: blur(24px) saturate(170%);
+  border: 1px solid var(--tk-line);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), inset 0 -1px 0 rgba(0,0,0,0.25), 0 20px 50px -20px rgba(0,0,0,0.7);
+}
+.tk-glass::before {
+  content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; padding: 1px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.35), rgba(255,255,255,0) 30%, rgba(255,255,255,0) 70%, color-mix(in srgb, var(--drink) 55%, transparent));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+}
+.tk-glass-dark { background: var(--tk-glass-strong); backdrop-filter: blur(28px) saturate(160%); -webkit-backdrop-filter: blur(28px) saturate(160%); border: 1px solid var(--tk-line); }
+}
+
+/* Glow CTA with moving sheen */
+.tk-cta {
+  position: relative; overflow: hidden; isolation: isolate;
+  background: linear-gradient(110deg, var(--tk-accent-3), var(--tk-accent) 45%, var(--tk-accent-2));
+  background-size: 200% 100%;
+  animation: tk-flow 6s ease-in-out infinite;
+  box-shadow: 0 10px 40px -8px color-mix(in srgb, var(--tk-accent) 70%, transparent), inset 0 1px 0 rgba(255,255,255,0.4);
+}
+.tk-cta::after {
+  content: ''; position: absolute; inset: -40% auto -40% -30%; width: 40%; transform: skewX(-20deg);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.55), transparent);
+  animation: tk-sheen 3.2s ease-in-out infinite; z-index: -1;
+}
+@keyframes tk-flow { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+@keyframes tk-sheen { 0% { left: -40%; } 60%,100% { left: 130%; } }
+
+/* Gradient text that takes the drink colour */
+.tk-gradient-text {
+  background: linear-gradient(100deg, #fff 10%, color-mix(in srgb, var(--drink) 80%, #fff) 55%, var(--tk-accent-2) 95%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+
+/* Aurora background */
+.tk-aurora { position: fixed; inset: -20%; z-index: 0; pointer-events: none; filter: blur(70px) saturate(140%); opacity: 0.85; }
+.tk-aurora span { position: absolute; border-radius: 9999px; mix-blend-mode: screen; animation: tk-drift 18s ease-in-out infinite alternate; }
+@keyframes tk-drift {
+  0% { transform: translate3d(0,0,0) scale(1) rotate(0deg); }
+  50% { transform: translate3d(8%, -6%, 0) scale(1.15) rotate(25deg); }
+  100% { transform: translate3d(-6%, 8%, 0) scale(0.92) rotate(-15deg); }
+}
+.tk-grain {
+  position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: 0.07; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+/* Marquee */
+.tk-marquee { display: flex; width: max-content; animation: tk-marquee 28s linear infinite; }
+@keyframes tk-marquee { to { transform: translateX(-50%); } }
+
+/* Liquid in the procedural glass */
+@keyframes tk-wave { 0%,100% { transform: translateX(0); } 50% { transform: translateX(-12px); } }
+@keyframes tk-bubble { 0% { transform: translateY(0); opacity: 0; } 15% { opacity: .9; } 100% { transform: translateY(-120px); opacity: 0; } }
+@keyframes tk-float { 0%,100% { transform: translateY(0) rotate(-1deg); } 50% { transform: translateY(-10px) rotate(1.5deg); } }
+@keyframes tk-pulse-ring { 0% { transform: scale(.8); opacity: .7; } 100% { transform: scale(1.8); opacity: 0; } }
+.tk-float { animation: tk-float 6s ease-in-out infinite; }
+.tk-wave { animation: tk-wave 4s ease-in-out infinite; }
+.tk-bubble { animation: tk-bubble 3.4s ease-in infinite; }
+
+.tk-scroll-x { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.tk-scroll-x::-webkit-scrollbar { display: none; }
+.tk-scroll-x > * { scroll-snap-align: start; flex: none; }
+
+.tk-chip { border: 1px solid var(--tk-line); background: rgba(255,255,255,0.04); color: var(--tk-dim); transition: all .25s; }
+.tk-chip[data-on='true'] { color: #0b0b10; background: #fff; border-color: #fff; box-shadow: 0 0 24px -4px color-mix(in srgb, var(--drink) 80%, transparent); }
+
+.tk-safe-bottom { padding-bottom: calc(env(safe-area-inset-bottom) + 7rem); }
+
+@media (prefers-reduced-motion: reduce) {
+  .tk-aurora span, .tk-marquee, .tk-cta, .tk-cta::after, .tk-float, .tk-wave, .tk-bubble { animation: none !important; }
+}
+
+/* Apple-style Liquid Glass: refraction-like rim, specular arc, inner depth */
+@layer components {
+  .tk-liquid {
+    position: relative;
+    isolation: isolate;
+    background: linear-gradient(180deg, rgba(255,255,255,0.16), rgba(255,255,255,0.05) 45%, rgba(255,255,255,0.09));
+    backdrop-filter: blur(22px) saturate(200%) brightness(1.12) contrast(1.05);
+    -webkit-backdrop-filter: blur(22px) saturate(200%) brightness(1.12) contrast(1.05);
+    box-shadow:
+      inset 0 1px 0.5px rgba(255,255,255,0.75),
+      inset 0 -1px 1px rgba(255,255,255,0.18),
+      inset 1px 0 1px rgba(255,255,255,0.22),
+      inset -1px 0 1px rgba(255,255,255,0.12),
+      inset 0 -12px 24px -12px rgba(0,0,0,0.35),
+      0 1px 2px rgba(0,0,0,0.25),
+      0 22px 50px -18px rgba(0,0,0,0.75);
+    border: 0.5px solid rgba(255,255,255,0.28);
+  }
+  .tk-liquid::before {
+    content: ''; position: absolute; inset: 1px; border-radius: inherit; pointer-events: none; z-index: -1;
+    background:
+      radial-gradient(120% 60% at 50% -18%, rgba(255,255,255,0.42), transparent 55%),
+      radial-gradient(60% 80% at 0% 100%, color-mix(in srgb, var(--drink) 22%, transparent), transparent 70%),
+      radial-gradient(60% 80% at 100% 100%, rgba(124,92,255,0.18), transparent 70%);
+  }
+  .tk-lens {
+    background: radial-gradient(100% 100% at 50% 0%, rgba(255,255,255,0.38), rgba(255,255,255,0.08) 60%, rgba(255,255,255,0.14));
+    box-shadow:
+      inset 0 1px 1px rgba(255,255,255,0.9),
+      inset 0 -2px 6px rgba(0,0,0,0.25),
+      inset 0 0 12px color-mix(in srgb, var(--drink) 35%, transparent),
+      0 6px 18px -6px color-mix(in srgb, var(--drink) 80%, transparent);
+    border: 0.5px solid rgba(255,255,255,0.45);
+  }
+}
