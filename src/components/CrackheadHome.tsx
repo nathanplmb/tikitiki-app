@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { setFocusColor } from '../utils/theme';
-import { motion, useMotionValue, useSpring, useTransform, useAnimationControls } from 'motion/react';
+import { motion, useMotionValue, useSpring, useTransform, useAnimationControls, MotionValue } from 'motion/react';
+import { CatalogRecipe } from '../catalog/types';
 import { RefreshCw, AlertTriangle, Flame, PartyPopper, ShoppingBag } from 'lucide-react';
 import { CocktailRecipe } from '../types/cocktail';
 import { FLASH_CATALOG } from '../catalog/flash';
@@ -42,6 +43,50 @@ export const MetalLogo: React.FC<{ className?: string }> = ({ className = '' }) 
   </div>
 );
 
+/** Night-shop drinks fridge: LED strip, wire shelves with real products, frosted glass door with reflections. */
+const NightFridge: React.FC<{ mx: MotionValue<number>; my: MotionValue<number>; onOpen: (c: CocktailRecipe) => void }> = ({ mx, my, onOpen }) => {
+  const shelves = useMemo(() => {
+    const neat = FLASH_CATALOG.filter((r) => r.pack);
+    const rows: CatalogRecipe[][] = [[], [], []];
+    neat.forEach((r, i) => rows[i % 3].length < 5 && rows[i % 3].push(r));
+    return rows;
+  }, []);
+  const px = useTransform(mx, [-0.5, 0.5], [10, -10]);
+  const py = useTransform(my, [-0.5, 0.5], [6, -6]);
+  const glare = useTransform(mx, [-0.5, 0.5], ['-30%', '30%']);
+  return (
+    <div className="relative w-full h-full rounded-[18px] p-[7px] shadow-[0_30px_80px_-20px_#000,0_0_60px_-20px_var(--accent)]"
+      style={{ background: 'linear-gradient(90deg,#2a2d31,#6d737a 12%,#2a2d31 30%,#1b1d20 70%,#5d636a 90%,#24272a)' }}>
+      <div className="relative w-full h-full rounded-[12px] overflow-hidden bg-[linear-gradient(180deg,#0c1014,#05070a)]">
+        {/* LED strip */}
+        <div className="absolute inset-x-3 top-1.5 h-[3px] rounded-full bg-white shadow-[0_0_14px_4px_rgba(210,235,255,.85)] animate-[pulse_3s_ease-in-out_infinite]" />
+        <div className="absolute inset-x-0 top-0 h-1/2 bg-[radial-gradient(ellipse_at_50%_0%,rgba(200,230,255,.28),transparent_70%)]" />
+        <motion.div style={{ x: px, y: py }} className="absolute inset-x-3 top-5 bottom-2 flex flex-col justify-between">
+          {shelves.map((row, ri) => (
+            <div key={ri} className="relative flex-1 flex items-end justify-around px-1">
+              {row.map((r) => (
+                <button key={r.id} onClick={() => onOpen(toCocktailRecipe(r))} aria-label={r.name} className="h-[88%] aspect-[200/260] -mx-1 transition-transform active:scale-90 hover:-translate-y-1">
+                  <CocktailArt color={r.color} glass={r.glass} ice={r.ice} pack={r.pack} animated={false} glow={false} className="w-full h-full" />
+                </button>
+              ))}
+              {/* wire shelf + price-rail labels */}
+              <div className="absolute inset-x-0 bottom-0 h-[5px] rounded bg-[linear-gradient(180deg,#c9ced4,#555b61)] shadow-[0_3px_8px_rgba(0,0,0,.7)]" />
+              <div className="absolute inset-x-1 -bottom-[9px] flex justify-around">
+                {row.map((r) => <span key={r.id} className="text-[5.5px] font-bold uppercase bg-white/90 text-black px-0.5 rounded-[1px] max-w-[18%] truncate">{r.name}</span>)}
+              </div>
+            </div>
+          ))}
+        </motion.div>
+        {/* glass door: moving glare, frost on the edges, handle */}
+        <motion.div style={{ x: glare }} className="absolute -inset-y-4 -left-1/2 w-[200%] pointer-events-none bg-[linear-gradient(105deg,transparent_38%,rgba(255,255,255,.16)_45%,rgba(255,255,255,.04)_50%,transparent_56%)]" />
+        <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_30px_8px_rgba(220,240,255,.18)]" />
+        <div className="absolute inset-x-0 bottom-0 h-10 pointer-events-none bg-[linear-gradient(0deg,rgba(220,240,255,.18),transparent)] blur-[2px]" />
+        <div className="absolute right-2 top-[18%] bottom-[18%] w-[6px] rounded-full bg-[linear-gradient(90deg,#4a4f55,#e6e9ec,#4a4f55)] shadow-[0_0_6px_rgba(0,0,0,.8)]" />
+      </div>
+    </div>
+  );
+};
+
 export const CrackheadHome: React.FC<Props> = ({ barIds, barKnown, recentIds, onSelectCocktail, onOpenRoulette, onOpenParty, onOpenShopping, onOpenCollection }) => {
   const pool = useMemo(() => FLASH_CATALOG.filter((r) => r.alcoholic && r.glass === 'bottle'), []);
   const [idx, setIdx] = useState(() => Math.floor(Math.random() * pool.length));
@@ -82,32 +127,35 @@ export const CrackheadHome: React.FC<Props> = ({ barIds, barKnown, recentIds, on
         className="relative h-[90svh] min-h-[640px] max-h-[880px] overflow-hidden bg-[#050505]"
         style={{ ['--drink' as string]: art.color }}
       >
-        {/* stage: red spotlights, smoke, embers, rare lightning */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_0%,#3a0602_0%,#120202_45%,#050505_80%)]" />
-        <div className="tk-spot left-[-8%]" style={{ ['--a' as string]: '-18deg' }} aria-hidden />
-        <div className="tk-spot right-[-8%]" style={{ ['--a' as string]: '18deg', animationDelay: '-3s' }} aria-hidden />
-        <div className="tk-smoke w-[90%] h-[30%] left-[-20%] top-[48%]" aria-hidden />
-        <div className="tk-smoke w-[80%] h-[26%] right-[-25%] top-[58%]" style={{ animationDelay: '-7s' }} aria-hidden />
-        {EMBERS.map((e, i) => (
+        {/* night-shop scene: dark tiled wall, neon spill, smoke, embers */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_8%,color-mix(in_srgb,var(--accent)_30%,#120404)_0%,#0a0606_45%,#040404_85%)]" />
+        <div className="absolute inset-0 opacity-[0.12]" style={{ backgroundImage: 'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)', backgroundSize: '38px 26px' }} aria-hidden />
+        <div className="tk-smoke w-[90%] h-[26%] left-[-20%] top-[70%]" aria-hidden />
+        {EMBERS.slice(0, 10).map((e, i) => (
           <span key={i} className="tk-ember" aria-hidden style={{ left: `${e.left}%`, animationDelay: `${e.delay}s`, animationDuration: `${e.dur}s`, ['--dx' as string]: e.dx }} />
         ))}
-        <div className="tk-lightning" aria-hidden />
 
-        <motion.div initial={{ opacity: 0, y: -20, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.9, ease: [0.2, 1, 0.3, 1] }}
-          className="absolute inset-x-0 top-[calc(env(safe-area-inset-top)+64px)] flex flex-col items-center">
+        {/* neon sign */}
+        <motion.div initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.9, ease: [0.2, 1, 0.3, 1] }}
+          className="absolute inset-x-0 top-[calc(env(safe-area-inset-top)+58px)] flex flex-col items-center z-10">
           <MetalLogo />
-          <div className="tk-display text-[22px] text-white/90 -mt-1 [text-shadow:0_0_14px_color-mix(in_srgb,var(--accent)_80%,transparent)]">version crackhead</div>
-          <div className="tk-mono text-[9px] mt-1 tracking-[0.45em]">Pré-soirée · Épicerie de nuit · {FLASH_CATALOG.length} références</div>
+          <div className="tk-display text-[21px] text-white/90 -mt-1 [text-shadow:0_0_14px_color-mix(in_srgb,var(--accent)_80%,transparent)]">version crackhead</div>
         </motion.div>
 
-        {/* bottle on a smoked-glass plinth, tilts with the finger, flips on reroll */}
-        <motion.button aria-label={`Voir ${flash.name}`} onClick={() => onSelectCocktail(flash)} style={{ rotateX: rx, rotateY: ry, transformPerspective: 700 }}
-          className="absolute inset-x-0 top-[25%] flex justify-center">
-          <motion.div animate={bottle} className="w-[46vw] max-w-[220px] tk-float">
-            <CocktailArt {...art} glass="bottle" className="w-full drop-shadow-[0_0_40px_color-mix(in_srgb,var(--accent)_55%,transparent)]" />
+        {/* the fridge: tilts as a block, products sit on a deeper plane (parallax) */}
+        <motion.div style={{ rotateX: rx, rotateY: ry, transformPerspective: 900 }} className="absolute left-1/2 -translate-x-1/2 top-[24%] w-[88vw] max-w-[420px] h-[40%]">
+          <NightFridge mx={mx} my={my} onOpen={onSelectCocktail} />
+        </motion.div>
+
+        {/* featured flash in front of the fridge */}
+        <motion.button aria-label={`Voir ${flash.name}`} onClick={() => onSelectCocktail(flash)}
+          style={{ rotateX: rx, rotateY: ry, transformPerspective: 600, x: useTransform(mx, [-0.5, 0.5], [-14, 14]) }}
+          className="absolute right-[3%] top-[54%] z-20">
+          <motion.div animate={bottle} className="w-[24vw] max-w-[120px] tk-float">
+            <CocktailArt {...art} glass="bottle" className="w-full drop-shadow-[0_18px_30px_rgba(0,0,0,.8)]" />
           </motion.div>
         </motion.button>
-        <div className="absolute left-1/2 -translate-x-1/2 top-[62%] w-[64vw] max-w-[300px] h-6 rounded-[50%] bg-[radial-gradient(ellipse,color-mix(in_srgb,var(--accent)_55%,transparent),transparent_70%)] blur-md" aria-hidden />
+        <div className="absolute left-1/2 -translate-x-1/2 left-auto right-[2%] translate-x-0 top-[72%] w-[30vw] max-w-[150px] h-4 rounded-[50%] bg-[radial-gradient(ellipse,color-mix(in_srgb,var(--accent)_50%,transparent),transparent_70%)] blur-md z-10" aria-hidden />
 
         <div className="absolute inset-x-0 bottom-0 px-5 pb-8 pt-16 bg-gradient-to-t from-[#050505] via-[#050505]/90 to-transparent">
           <div className="flex items-center gap-2 tk-mono text-[10px]"><Flame className="w-3.5 h-3.5 text-[var(--accent)]" /> Flash du soir</div>

@@ -375,7 +375,7 @@ export const CocktailDetailModal: React.FC<CocktailDetailModalProps> = ({
               {cocktail.riskNote && (
                 <div role="alert" className="my-2 rounded-2xl border border-[#ff2a1a]/60 bg-[#ff2a1a]/12 px-3 py-2 text-[12px] text-white/90">⚠ {cocktail.riskNote}</div>
               )}
-              <h2 className="font-serif text-3xl sm:text-4xl text-white font-normal leading-tight">
+              <h2 className="tk-display text-[40px] sm:text-[48px] text-white leading-none">
                 {cocktail.name}
               </h2>
 

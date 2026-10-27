@@ -141,6 +141,29 @@ export const CocktailArt: React.FC<CocktailArtProps> = ({
           <stop offset="0.5" stopColor="#fff" stopOpacity="0.15" />
           <stop offset="1" stopColor="#fff" stopOpacity="0.45" />
         </radialGradient>
+        <linearGradient id={`cyl${uid}`} x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stopColor="#000" stopOpacity="0.62" />
+          <stop offset="0.1" stopColor="#000" stopOpacity="0.2" />
+          <stop offset="0.2" stopColor="#fff" stopOpacity="0.55" />
+          <stop offset="0.26" stopColor="#fff" stopOpacity="0.08" />
+          <stop offset="0.55" stopColor="#fff" stopOpacity="0" />
+          <stop offset="0.8" stopColor="#000" stopOpacity="0.22" />
+          <stop offset="0.9" stopColor="#fff" stopOpacity="0.18" />
+          <stop offset="1" stopColor="#000" stopOpacity="0.7" />
+        </linearGradient>
+        <linearGradient id={`alu${uid}`} x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stopColor="#6b737c" />
+          <stop offset="0.22" stopColor="#f4f6f8" />
+          <stop offset="0.5" stopColor="#aab2bb" />
+          <stop offset="0.8" stopColor="#e1e5e9" />
+          <stop offset="1" stopColor="#5d646c" />
+        </linearGradient>
+        <radialGradient id={`sph${uid}`} cx="0.36" cy="0.32" r="0.75">
+          <stop offset="0" stopColor="#fff" stopOpacity="0.55" />
+          <stop offset="0.25" stopColor="#fff" stopOpacity="0.08" />
+          <stop offset="0.75" stopColor="#000" stopOpacity="0.1" />
+          <stop offset="1" stopColor="#000" stopOpacity="0.55" />
+        </radialGradient>
         {/* micro-texture inside the drink so it does not look like flat vector colour */}
         <filter id={`tx${uid}`} x="0" y="0" width="100%" height="100%">
           <feTurbulence type="fractalNoise" baseFrequency="0.035 0.09" numOctaves="2" seed="4" result="n" />
@@ -227,8 +250,12 @@ export const CocktailArt: React.FC<CocktailArtProps> = ({
       </g>
 
       {/* silhouette: soft thick edge + crisp highlight line */}
-      <path d={s.bowl} fill="none" stroke="#e8f6ff" strokeOpacity="0.18" strokeWidth="5" filter={`url(#bs${uid})`} />
-      <path d={s.bowl} fill="none" stroke="#fff" strokeOpacity="0.62" strokeWidth="1" />
+      {!opaque && (
+        <>
+          <path d={s.bowl} fill="none" stroke="#e8f6ff" strokeOpacity="0.18" strokeWidth="5" filter={`url(#bs${uid})`} />
+          <path d={s.bowl} fill="none" stroke="#fff" strokeOpacity="0.62" strokeWidth="1" />
+        </>
+      )}
       {glass !== 'bottle' && !opaque && glass !== 'ball' && <ellipse cx="100" cy={ry} rx={w / 2} ry="4.5" fill="none" stroke="#fff" strokeOpacity="0.85" strokeWidth="1.1" />}
       {glass !== 'bottle' && !opaque && glass !== 'ball' && <ellipse cx="100" cy={ry + 1.5} rx={w / 2 - 2} ry="3" fill="none" stroke="#fff" strokeOpacity="0.25" strokeWidth="1.5" />}
       {glass !== 'bottle' && !opaque && glass !== 'ball' && <path d={`M${rx1 + w * 0.15} ${ry - 2.5} Q100 ${ry - 6} ${rx2 - w * 0.25} ${ry - 3}`} stroke="#fff" strokeWidth="1.6" strokeLinecap="round" fill="none" opacity="0.9" />}
@@ -259,40 +286,56 @@ export const CocktailArt: React.FC<CocktailArtProps> = ({
           })}
           <path d="M60 226 Q70 236 80 228 Q90 238 100 229 Q110 238 120 228 Q130 236 140 226" stroke="#fff" strokeOpacity="0.4" strokeWidth="1" fill="none" />
           <rect x="85" y="56" width="30" height="3.5" rx="1.75" fill="#fff" opacity="0.75" />
-          <rect x="84" y="20" width="32" height="22" rx="4" fill="#f4f7fa" opacity="0.82" />
+          <rect x="84" y="20" width="32" height="22" rx="4" fill="#f4f7fa" opacity="0.85" />
+          <rect x="84" y="20" width="32" height="22" rx="4" fill={`url(#cyl${uid})`} opacity="0.55" />
           {[0, 1, 2, 3, 4, 5, 6].map((i) => <rect key={i} x={87 + i * 4.2} y="22" width="1.4" height="18" rx="0.7" fill="#b9c6d2" opacity="0.8" />)}
           <rect x="86" y="21" width="5" height="20" rx="2.5" fill="#fff" />
           <rect x="83" y="41" width="34" height="3.5" rx="1.75" fill="#e6edf3" opacity="0.9" />
         </>
       )}
       {opaque && (() => {
-        const L = glass === 'can' ? 58 : 70, R = glass === 'can' ? 142 : 130, T = glass === 'can' ? 64 : 52;
+        const L = glass === 'can' ? 58 : 70, R = glass === 'can' ? 142 : 130, T = glass === 'can' ? 66 : 54;
         const bg = pack?.bg ?? color, band = pack?.band ?? '#0b0b0d', ink = pack?.ink ?? '#fff';
-        const mid = (T + 224) / 2;
+        const mid = (T + 222) / 2;
+        const body = `M${L} ${T} Q${L} ${T - 6} ${L + 6} ${T - 10} L${R - 6} ${T - 10} Q${R} ${T - 6} ${R} ${T} L${R} 214 Q${R} 224 ${R - 8} 228 L${L + 8} 228 Q${L} 224 ${L} 214 Z`;
+        const drops = Array.from({ length: 22 }, (_, i) => ({ x: L + 6 + ((i * 41) % (R - L - 12)), y: T + 8 + ((i * 67) % 150), r: 0.9 + ((i * 5) % 4) * 0.45 }));
         return (
           <>
-            {/* aluminium can: printed sleeve in the product's colour code, central band, pull tab */}
-            <path d={`M${L} ${T} L${R} ${T} L${R} 222 Q100 232 ${L} 222 Z`} fill={bg} />
-            <path d={`M${L} ${mid - 26} L${R} ${mid - 26} L${R} ${mid + 22} L${L} ${mid + 22} Z`} fill={band} />
-            <text x="100" y={mid + 6} textAnchor="middle" fontFamily="Bungee, Plus Jakarta Sans, sans-serif" fontSize={glass === 'can' ? (pack && pack.text.length > 5 ? 13 : 20) : 11} fill={ink}>{pack?.text ?? ''}</text>
-            <path d={`M${L} ${T} L${R} ${T} L${R} 222 Q100 232 ${L} 222 Z`} fill={`url(#la${uid})`} />
-            <rect x={L + 8} y={T + 6} width="8" height={152} rx="4" fill="#fff" opacity="0.32" />
-            <rect x={R - 14} y={T + 6} width="4" height={152} rx="2" fill="#fff" opacity="0.15" />
-            <path d={`M${L + 4} ${T - 12} L${R - 4} ${T - 12} L${R} ${T} L${L} ${T} Z`} fill="#c9ced4" />
-            <ellipse cx="100" cy={T - 12} rx={(R - L) / 2 - 4} ry="6" fill="#e7ebef" stroke="#9aa2ab" strokeWidth="1" />
-            <ellipse cx="96" cy={T - 13} rx="9" ry="3" fill="#aab2bb" />
-            <path d={`M${L} 222 Q100 232 ${R} 222 L${R - 4} 230 Q100 238 ${L + 4} 230 Z`} fill="#b8bec5" />
+            {/* printed aluminium can: sleeve, band, cylindrical metal shading, lid with rings and tab */}
+            <path d={body} fill={bg} />
+            <path d={`M${L} ${mid - 28} L${R} ${mid - 28} L${R} ${mid + 24} L${L} ${mid + 24} Z`} fill={band} />
+            <path d={`M${L} ${mid - 31} L${R} ${mid - 31} M${L} ${mid + 27} L${R} ${mid + 27}`} stroke={ink} strokeOpacity="0.55" strokeWidth="1.2" />
+            <text x="100" y={mid + 6} textAnchor="middle" fontFamily="Bungee, Plus Jakarta Sans, sans-serif" fontSize={glass === 'can' ? ((pack?.text.length ?? 0) > 6 ? 12 : (pack?.text.length ?? 0) > 4 ? 15 : 20) : (pack?.text.length ?? 0) > 7 ? 8 : 10.5} fill={ink} letterSpacing="0.5">{pack?.text ?? ''}</text>
+            <path d={body} fill={`url(#cyl${uid})`} />
+            <rect x={L + 10} y={T - 2} width="3" height={210} rx="1.5" fill="#fff" opacity="0.7" />
+            {/* condensation on the cold metal */}
+            {drops.map((d, i) => (
+              <g key={i}>
+                <ellipse cx={d.x} cy={d.y} rx={d.r} ry={d.r * 1.25} fill="#fff" opacity="0.28" />
+                <circle cx={d.x - d.r * 0.3} cy={d.y - d.r * 0.4} r={d.r * 0.32} fill="#fff" opacity="0.9" />
+              </g>
+            ))}
+            <path d={`M${L + 6} ${T - 10} Q${L + 10} ${T - 22} ${L + 14} ${T - 24} L${R - 14} ${T - 24} Q${R - 10} ${T - 22} ${R - 6} ${T - 10} Z`} fill={`url(#alu${uid})`} />
+            <ellipse cx="100" cy={T - 24} rx={(R - L) / 2 - 14} ry="5.5" fill="#d9dde2" stroke="#7d858e" strokeWidth="1.2" />
+            <ellipse cx="100" cy={T - 24} rx={(R - L) / 2 - 19} ry="3.8" fill="none" stroke="#8f979f" strokeWidth="0.8" />
+            <path d={`M92 ${T - 26} q8 -4 16 0 q-2 4 -8 4 q-6 0 -8 -4z`} fill="#b9c0c7" stroke="#6f777f" strokeWidth="0.7" />
+            <ellipse cx="103" cy={T - 25} rx="2.4" ry="1.2" fill="#5f666e" />
+            <path d={`M${L + 8} 228 Q100 236 ${R - 8} 228 L${R - 12} 232 Q100 239 ${L + 12} 232 Z`} fill={`url(#alu${uid})`} />
           </>
         );
       })()}
       {glass === 'ball' && (
         <>
-          {/* spherical 20 cl plastic bottle: liquid visible, wrap-around band, black screw cap */}
-          <path d="M40 150 Q100 166 160 150 L158 176 Q100 192 42 176 Z" fill={pack?.band ?? '#111'} opacity="0.92" />
-          <text x="100" y="174" textAnchor="middle" fontFamily="Bungee, sans-serif" fontSize="12" fill={pack?.ink ?? '#fff'}>{pack?.text ?? ''}</text>
-          <ellipse cx="78" cy="120" rx="10" ry="26" fill="#fff" opacity="0.35" transform="rotate(25 78 120)" />
-          <rect x="86" y="52" width="28" height="20" rx="4" fill="#141414" />
-          {[0, 1, 2, 3, 4].map((i) => <rect key={i} x={89 + i * 5} y="54" width="1.5" height="16" fill="#333" />)}
+          {/* spherical 20 cl bottle: liquid behind clear plastic, sphere shading, band, screw cap */}
+          <circle cx="100" cy="146" r="62" fill={`url(#sph${uid})`} />
+          <path d="M40 140 Q100 156 160 140 L160 168 Q100 184 40 168 Z" fill={pack?.band ?? '#111'} opacity="0.95" />
+          <path d="M40 140 Q100 156 160 140 L160 168 Q100 184 40 168 Z" fill={`url(#cyl${uid})`} opacity="0.7" />
+          <text x="100" y="166" textAnchor="middle" fontFamily="Bungee, sans-serif" fontSize="13" fill={pack?.ink ?? '#fff'}>{pack?.text ?? ''}</text>
+          <ellipse cx="74" cy="112" rx="9" ry="22" fill="#fff" opacity="0.5" transform="rotate(32 74 112)" />
+          <circle cx="132" cy="186" r="5" fill="#fff" opacity="0.25" />
+          <rect x="85" y="50" width="30" height="22" rx="4" fill="#161616" />
+          <rect x="85" y="50" width="30" height="22" rx="4" fill={`url(#cyl${uid})`} />
+          {[0, 1, 2, 3, 4].map((i) => <rect key={i} x={89 + i * 5} y="52" width="1.4" height="18" fill="#3a3a3a" />)}
         </>
       )}
       {glass === 'solo' && cup === 'red' && (
