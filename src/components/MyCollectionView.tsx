@@ -16,6 +16,8 @@ import {
 } from 'lucide-react';
 import { CocktailRecipe, UserTastePreferences } from '../types/cocktail';
 import { sounds } from '../utils/audio';
+import { DrinkVisual } from './ui';
+import { artFor } from '../catalog/adapter';
 
 interface MyCollectionViewProps {
   favorites: CocktailRecipe[];
@@ -270,26 +272,9 @@ export const MyCollectionView: React.FC<MyCollectionViewProps> = ({
                   isComparing ? 'border-purple-400 shadow-lg' : 'border-white/10 hover:border-white/20'
                 }`}
               >
-                <div className="aspect-[16/10] overflow-hidden relative bg-black/40">
-                  <img
-                    src={cocktail.imageUrl}
-                    alt={cocktail.name}
-                    referrerPolicy="no-referrer"
-                    onError={(e) => {
-                      const target = e.currentTarget;
-                      target.style.display = 'none';
-                      if (target.nextElementSibling) {
-                        (target.nextElementSibling as HTMLElement).style.display = 'flex';
-                      }
-                    }}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div 
-                    style={{ display: 'none' }}
-                    className="w-full h-full bg-gradient-to-tr from-purple-950/60 via-[#0A0C14] to-black items-center justify-center"
-                  >
-                    <Bookmark className="w-10 h-10 text-purple-300/40" />
-                  </div>
+                <div className="aspect-[16/10] overflow-hidden relative" style={{ background: `radial-gradient(circle at 50% 65%, ${artFor(cocktail).color}66, transparent 70%)` }}>
+                  {/* photo when one exists, procedural glass/can/bottle otherwise (catalog drinks have no photo) */}
+                  <DrinkVisual c={cocktail} animated={false} className={cocktail.imageUrl ? "w-full h-full" : "absolute inset-0 m-auto h-[92%] w-full"} />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0A0C14] via-transparent to-transparent pointer-events-none" />
 
                   <div className="absolute top-2.5 right-2.5">
